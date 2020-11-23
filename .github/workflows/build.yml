@@ -26,10 +26,12 @@ jobs:
             start_worker: ""
             worker: ""
             stop_worker: ""
+    env: 
+      WORKSPACE: ${{ env.GITHUB_WORKSPACE }}
     steps:
       - name: Checkout latest revision
         uses: actions/checkout@v2
-      - run: export WORKSPACE=${GITHUB_WORKSPACE}
+      # - run: export WORKSPACE=${GITHUB_WORKSPACE}
       - run: echo ${GITHUB_WORKSPACE}
       - run: echo ${WORKSPACE}
       # - name: Start the worker
