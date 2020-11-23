@@ -1,0 +1,34 @@
+name: Build FooBar
+on: push
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.name }}
+    strategy:
+      matrix:
+        include:
+          - name: "Debian 9 (Stretch)"
+            os: ubuntu-latest
+            ci_type: deb
+            start_runner: "docker run -di -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} --name worker --rm debian:stretch"
+            runner: "docker exec -w ${GITHUB_WORKSPACE} -e PYTHON=${PYTHON} -e WORKSPACE=${GITHUB_WORKSPACE} worker"
+            stop_runner: "docker kill worker"
+          - name: "Ubuntu 20.04 (Bionic)"
+            os: ubuntu-latest
+            ci_type: deb
+            start_runner: "docker run -di -v ${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE} --name worker --rm ubuntu:bionic"
+            runner: "docker exec -w ${GITHUB_WORKSPACE} -e PYTHON=${PYTHON} -e WORKSPACE=${GITHUB_WORKSPACE} worker"
+            stop_runner: "docker kill worker"
+          - name: "macOS 10.15 (Catalina)"
+            os: macos-10.15
+            ci_type: brew
+            start_runner: ""
+            runner: ""
+            stop_runner: ""
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo ${{ matrix.env.ci_type }}
+      - run: ${{ matrix.env.start_runner }}
+      - run: ${{ matrix.env.runner }} cat /etc/os-release
+      - run: ${{ matrix.env.stop_runner }}
