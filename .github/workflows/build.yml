@@ -28,7 +28,7 @@ jobs:
             stop_runner: ""
     steps:
       - uses: actions/checkout@v2
-      - run: echo ${{ matrix.env.ci_type }}
-      - run: ${{ matrix.env.start_runner }}
-      - run: ${{ matrix.env.runner }} cat /etc/os-release
-      - run: ${{ matrix.env.stop_runner }}
+      - run: echo ${{ matrix.ci_type }}
+      - run: ${{ matrix.start_runner }}
+      - run: ${{ matrix.runner }} cat /etc/os-release || echo "something went wrong"
+      - run: ${{ matrix.stop_runner }}
