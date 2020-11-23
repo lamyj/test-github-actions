@@ -26,12 +26,15 @@ jobs:
             start_worker: ""
             worker: ""
             stop_worker: ""
+    env:
+      WORKSPACE: ${GITHUB_WORKSPACE}
     steps:
       - name: Checkout latest revision
         uses: actions/checkout@v2
-      - name: Start the worker
-        run: ${{ matrix.start_worker }}
-      - name: Configure
-        run: ${{ matrix.worker }} cat /etc/os-release || echo "something went wrong"
-      - name: Stop the worker
-        run: ${{ matrix.stop_worker }}
+      - run: echo ${WORKSPACE}
+      # - name: Start the worker
+      #   run: ${{ matrix.start_worker }}
+      # - name: Configure
+      #   run: ${{ matrix.worker }} cat /etc/os-release || echo "something went wrong"
+      # - name: Stop the worker
+      #   run: ${{ matrix.stop_worker }}
