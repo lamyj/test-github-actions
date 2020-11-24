@@ -29,10 +29,9 @@ jobs:
     steps:
       - name: Checkout latest revision
         uses: actions/checkout@v2
-      # - run: export WORKSPACE=${GITHUB_WORKSPACE}
+      - run: echo "WORKSPACE=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
+      - run: echo $GITHUB_ENV
       - run: echo ${WORKSPACE}
-        env:
-          WORKSPACE: '${{ env.GITHUB_WORKSPACE }}'
       # - name: Start the worker
       #   run: ${{ matrix.start_worker }}
       # - name: Configure
