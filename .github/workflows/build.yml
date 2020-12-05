@@ -2,26 +2,25 @@ name: Build FooBar
 on: push
 
 jobs:
-  build:
-    runs-on: windows-latest
+  fetch:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
-          repository: lamyj/sycomore
-      # - uses: s-weigand/setup-conda@v1
-      #   with:
-      #     conda-channels: anaconda, conda-forge
-      - uses: conda-incubator/setup-miniconda@v2
+          repository: lamyj/dicomifier
+      - run: ./tests/download_data
+      - uses: actions/upload-artifact@v2
         with:
-          # auto-update-conda: true
-          # python-version: 3.8
-          channels: conda-forge
-          # channel-priority: flexible
-          show-channel-urls: true
-      - run: conda install boost ninja pybind11 xsimd
-      - run: python -m pip install numpy
-      - run: |
-          mkdir build
-          cd build
-          cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
-          cmake --build . --config Release --target install
+          name: test-data
+          path: |
+            tests/data/input
+            tests/data/baseline
+  build:
+    needs: fetch
+    runs-on: macos-latest
+    steps:
+      - uses: actions/download-artifact@v2 # TODO
+        with:
+          name: test-data
+      - run: ls -l tests/data/*
+      
