@@ -18,9 +18,19 @@ jobs:
             tests/data/baseline
   build:
     needs: fetch
-    runs-on: macos-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+          - os: macos-10.15
     steps:
-      - uses: actions/download-artifact@v2 # TODO
+      # FIXME? this is already done in the first action. Add to artifact?
+      - uses: actions/checkout@v2
+        with:
+          repository: lamyj/dicomifier
+      - uses: actions/download-artifact@v2
         with:
           name: test-data
       - run: ls -l tests/data/*
