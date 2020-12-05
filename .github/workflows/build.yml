@@ -9,6 +9,7 @@ jobs:
         with:
           repository: lamyj/dicomifier
       - run: ./tests/download_data
+      - run: ls tests/data
       - uses: actions/upload-artifact@v2
         with:
           name: test-data
