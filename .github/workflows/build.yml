@@ -8,14 +8,13 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: lamyj/dicomifier
-      - run: ./tests/download_data
-      - run: ls tests/data
+      - run: curl -L -o dicomifier-data.zip --silent --show-error https://iris.icube.unistra.fr/nextcloud/s/qGD3XgXoLbF9D8w/download
+      - run: ls -l
       - uses: actions/upload-artifact@v2
         with:
           name: test-data
           path: |
-            tests/data/input
-            tests/data/baseline
+            dicomifier-data.zip
   build:
     needs: fetch
     runs-on: ${{ matrix.os }}
@@ -27,11 +26,13 @@ jobs:
           - os: macos-10.15
     steps:
       # FIXME? this is already done in the first action. Add to artifact?
+      - run: ls -l
       - uses: actions/checkout@v2
         with:
           repository: lamyj/dicomifier
+      - run: ls -l
       - uses: actions/download-artifact@v2
         with:
           name: test-data
-      - run: ls -l tests/data/*
+      - run: ls -l
       
