@@ -11,6 +11,7 @@ jobs:
           - os: windows-latest
     steps:
       - name: Configure environment
+        shell: bash
         run: |
           echo "WORKSPACE=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
           echo "PYTHON=${{ matrix.python }}" >> $GITHUB_ENV
