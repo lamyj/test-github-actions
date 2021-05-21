@@ -11,7 +11,7 @@ jobs:
           - os: windows-latest
     steps:
       - name: Configure environment
-        # shell: bash
+        shell: cmd
         # $Env:
         run: |
           echo "WORKSPACE=%GITHUB_WORKSPACE%" >> %GITHUB_ENV%
