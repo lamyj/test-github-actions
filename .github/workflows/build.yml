@@ -15,22 +15,15 @@ jobs:
         # $Env:
         run: |
           echo "WORKSPACE=$Env:GITHUB_WORKSPACE" >> $Env:GITHUB_ENV
-          echo "PYTHON=${{ matrix.python }}" >> $Env:GITHUB_ENV
-          echo "CMAKE_OPTIONS=${{ matrix.cmake_options }}" >> $Env:GITHUB_ENV
+          echo "PYTHON=python" >> $Env:GITHUB_ENV
       - name: Clone source
         uses: actions/checkout@v2
         with:
           repository: lamyj/sycomore
       - name: Setup conda
-        #uses: s-weigand/setup-conda@v1.0.5
-        # shell: cmd
-        run: |
-          C:\Miniconda\condabin\conda.bat init powershell
+        run: C:\Miniconda\condabin\conda.bat init powershell
       - uses: seanmiddleditch/gha-setup-vsdevenv@master
       - name: Build
-        # shell: bash
-        # shell: cmd
-        # set
         run: |
           C:\Miniconda\condabin\conda.bat activate base
           C:\Miniconda\condabin\conda.bat install --yes -c conda-forge boost cmake ninja numpy pybind11 xsimd
@@ -38,11 +31,4 @@ jobs:
           # NOTE: Ninja generator uses a version of Clang shipped by MSVC which
           # fails with xsimd.
           .ci\windows\build.cmd
-          #mkdir build
-          #mkdir install
-          #cd build
-          #cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=..\install ../
-          #cmake --build . --config Release --target install
-          #cd ..
-          #
           .ci\windows\post_build.cmd
