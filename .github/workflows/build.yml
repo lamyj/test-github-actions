@@ -14,4 +14,5 @@ jobs:
         with:
           repository: lamyj/sycomore
       - name: Build
+        shell: cmd
         run: call .\.ci\windows\build.cmd
