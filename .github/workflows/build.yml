@@ -34,14 +34,15 @@ jobs:
         run: |
           C:\Miniconda\condabin\conda.bat activate base
           C:\Miniconda\condabin\conda.bat install --yes -c conda-forge boost cmake ninja numpy pybind11 xsimd
-          Get-ChildItem -Path Env:\
+          # Get-ChildItem -Path Env:\
           # NOTE: Ninja generator uses a version of Clang shipped by MSVC which
           # fails with xsimd.
           # .ci\windows\build.cmd
           mkdir build
           mkdir install
           cd build
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install ../
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=..\install ../
           cmake --build . --config Release --target install
+          cd ..
           #
           .ci\windows\post_build.cmd
