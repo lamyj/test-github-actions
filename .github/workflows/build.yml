@@ -35,4 +35,8 @@ jobs:
           C:\Miniconda\condabin\conda.bat activate base
           C:\Miniconda\condabin\conda.bat install --yes -c conda-forge boost cmake ninja numpy pybind11 xsimd
           Get-ChildItem -Path Env:\
-          .ci\windows\build.cmd
+          # .ci\windows\build.cmd
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ../
+          cmake --build . --config Release
