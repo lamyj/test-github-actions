@@ -13,7 +13,7 @@ jobs:
       - name: Configure environment
         # shell: bash
         run: |
-          echo "WORKSPACE=${GITHUB_WORKSPACE}" >> $Env:GITHUB_ENV
+          echo "WORKSPACE=$Env:GITHUB_WORKSPACE" >> $Env:GITHUB_ENV
           echo "PYTHON=${{ matrix.python }}" >> $Env:GITHUB_ENV
           echo "CMAKE_OPTIONS=${{ matrix.cmake_options }}" >> $Env:GITHUB_ENV
       - name: Clone source
