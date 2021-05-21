@@ -3,7 +3,6 @@ on: push
 
 jobs:
   build:
-    needs: fetch
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
