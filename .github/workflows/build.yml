@@ -15,4 +15,8 @@ jobs:
           repository: lamyj/sycomore
       - name: Build
         shell: cmd
-        run: call .\.ci\windows\build.cmd
+        run: |
+          conda install --yes -c conda-forge cmake ninja numpy pybind11 xsimd
+          mkdir build
+          cd build
+          cmake -G Ninja -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_BUILD_TYPE=Release ../
