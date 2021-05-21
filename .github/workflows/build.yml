@@ -11,27 +11,28 @@ jobs:
           - os: windows-latest
     steps:
       - name: Configure environment
-        shell: cmd
+        # shell: cmd
         # $Env:
         run: |
-          echo "WORKSPACE=%GITHUB_WORKSPACE%" >> %GITHUB_ENV%
-          echo "PYTHON=${{ matrix.python }}" >> %GITHUB_ENV%
-          echo "CMAKE_OPTIONS=${{ matrix.cmake_options }}" >> %GITHUB_ENV%
+          echo "WORKSPACE=$Env:GITHUB_WORKSPACE" >> $Env:GITHUB_ENV
+          echo "PYTHON=${{ matrix.python }}" >> $Env:GITHUB_ENV
+          echo "CMAKE_OPTIONS=${{ matrix.cmake_options }}" >> $Env:GITHUB_ENV
       - name: Clone source
         uses: actions/checkout@v2
         with:
           repository: lamyj/sycomore
       - name: Setup conda
         #uses: s-weigand/setup-conda@v1.0.5
-        shell: cmd
+        # shell: cmd
         run: |
-          C:\Miniconda\condabin\conda.bat init
+          C:\Miniconda\condabin\conda.bat init powershell
+      - uses: seanmiddleditch/gha-setup-vsdevenv@master
       - name: Build
         # shell: bash
-        shell: cmd
-        # Get-ChildItem -Path Env:\
+        # shell: cmd
+        # set
         run: |
           C:\Miniconda\condabin\conda.bat activate base
           C:\Miniconda\condabin\conda.bat install --yes -c conda-forge boost cmake ninja numpy pybind11 xsimd
-          set
-          call .ci\windows\build.cmd
+          Get-ChildItem -Path Env:\
+          .ci\windows\build.cmd
