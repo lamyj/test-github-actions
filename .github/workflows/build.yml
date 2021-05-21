@@ -34,4 +34,4 @@ jobs:
           C:\Miniconda\condabin\conda.bat activate base
           C:\Miniconda\condabin\conda.bat install --yes -c conda-forge boost cmake ninja numpy pybind11 xsimd
           set
-          .ci\windows\build.cmd
+          call .ci\windows\build.cmd
