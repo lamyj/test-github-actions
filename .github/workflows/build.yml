@@ -11,7 +11,7 @@ jobs:
           - os: windows-latest
     steps:
       - name: Configure environment
-        shell: bash
+        # shell: bash
         run: |
           echo "WORKSPACE=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
           echo "PYTHON=${{ matrix.python }}" >> $GITHUB_ENV
@@ -21,10 +21,16 @@ jobs:
         with:
           repository: lamyj/sycomore
       - name: Setup conda
-        uses: s-weigand/setup-conda@v1.0.5
-      - name: Build
-        shell: bash
+        #uses: s-weigand/setup-conda@v1.0.5
+        shell: cmd
         run: |
+          C:\Miniconda\condabin\conda.bat init
+      - name: Build
+        # shell: bash
+        shell: cmd
+        run: |
+          C:\Miniconda\condabin\conda.bat activate base
           conda install --yes -c conda-forge boost cmake ninja numpy pybind11 xsimd
-          env
-          ./.ci/deb/build
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          echo %WORKSPACE%
+          call .ci/windows/build.cmd
