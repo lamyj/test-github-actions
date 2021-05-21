@@ -19,7 +19,5 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          conda install --yes -c conda-forge cmake ninja numpy pybind11 xsimd
-          mkdir build
-          cd build
-          cmake -G Ninja -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_BUILD_TYPE=Release ../
+          conda install --yes -c conda-forge boost cmake ninja numpy pybind11 xsimd
+          ./.ci/deb/build
