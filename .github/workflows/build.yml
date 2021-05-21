@@ -10,9 +10,12 @@ jobs:
         include:
           - os: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Clone source
+        uses: actions/checkout@v2
         with:
           repository: lamyj/sycomore
+      - name: Setup conda
+        uses: s-weigand/setup-conda@v1.0.5
       - name: Build
         shell: cmd
         run: |
