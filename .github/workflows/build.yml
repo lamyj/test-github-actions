@@ -10,6 +10,11 @@ jobs:
         include:
           - os: windows-latest
     steps:
+      - name: Configure environment
+        run: |
+          echo "WORKSPACE=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
+          echo "PYTHON=${{ matrix.python }}" >> $GITHUB_ENV
+          echo "CMAKE_OPTIONS=${{ matrix.cmake_options }}" >> $GITHUB_ENV
       - name: Clone source
         uses: actions/checkout@v2
         with:
