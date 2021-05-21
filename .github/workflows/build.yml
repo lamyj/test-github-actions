@@ -17,7 +17,7 @@ jobs:
       - name: Setup conda
         uses: s-weigand/setup-conda@v1.0.5
       - name: Build
-        shell: cmd
+        shell: bash
         run: |
           conda install --yes -c conda-forge cmake ninja numpy pybind11 xsimd
           mkdir build
