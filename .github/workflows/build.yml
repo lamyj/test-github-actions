@@ -24,5 +24,6 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          conda install --yes -c conda-forge boost cmake ninja numpy pybind11 xsimd
-          ./.ci/deb/build
+          # conda install --yes -c conda-forge boost cmake ninja numpy pybind11 xsimd
+          env
+          #./.ci/deb/build
