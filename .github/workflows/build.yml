@@ -23,12 +23,18 @@ jobs:
       - name: Setup conda
         run: C:\Miniconda\condabin\conda.bat init powershell
       - uses: seanmiddleditch/gha-setup-vsdevenv@master
+      - name: Install
+        run: |
+          #C:\Miniconda\condabin\conda.bat activate base
+          C:\Miniconda\condabin\conda.bat install --yes -c conda-forge boost cmake ninja numpy pybind11 xsimd
       - name: Build
         run: |
-          C:\Miniconda\condabin\conda.bat activate base
-          C:\Miniconda\condabin\conda.bat install --yes -c conda-forge boost cmake ninja numpy pybind11 xsimd
-          Get-ChildItem -Path Env:\
+          #C:\Miniconda\condabin\conda.bat activate base
+          # Get-ChildItem -Path Env:\
           # NOTE: Ninja generator uses a version of Clang shipped by MSVC which
           # fails with xsimd.
           .ci\windows\build.cmd
+      - name: Test
+        run: |
+          #C:\Miniconda\condabin\conda.bat activate base
           .ci\windows\post_build.cmd
