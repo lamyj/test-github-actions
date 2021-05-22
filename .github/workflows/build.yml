@@ -1,36 +1,81 @@
-name: Build FooBar
+name: Build Sycomore
 on: push
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    name: ${{ matrix.name }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: windows-latest
+          - name: "Debian 9 (Stretch)"
+            os: ubuntu-latest
+            ci_type: deb
+            start_worker: "docker run -di -v ${WORKSPACE}:${WORKSPACE} --name worker --rm debian:stretch"
+            worker: "docker exec -w ${WORKSPACE} -e WORKSPACE=${WORKSPACE} worker"
+            stop_worker: "docker kill worker"
+            python: python3
+          - name: "Debian 10 (Buster)"
+            os: ubuntu-latest
+            ci_type: deb
+            start_worker: "docker run -di -v ${WORKSPACE}:${WORKSPACE} --name worker --rm debian:buster"
+            worker: "docker exec -w ${WORKSPACE} -e WORKSPACE=${WORKSPACE} worker"
+            stop_worker: "docker kill worker"
+            python: python3
+          - name: "Ubuntu 18.04 (Bionic)"
+            os: ubuntu-latest
+            ci_type: deb
+            start_worker: "docker run -di -v ${WORKSPACE}:${WORKSPACE} --name worker --rm ubuntu:bionic"
+            worker: "docker exec -w ${WORKSPACE} -e WORKSPACE=${WORKSPACE} worker"
+            stop_worker: "docker kill worker"
+            python: python3
+          - name: "Ubuntu 20.04 (Focal)"
+            os: ubuntu-latest
+            ci_type: deb
+            start_worker: "docker run -di -v ${WORKSPACE}:${WORKSPACE} --name worker --rm ubuntu:focal"
+            worker: "docker exec -w ${WORKSPACE} -e WORKSPACE=${WORKSPACE} worker"
+            stop_worker: "docker kill worker"
+            python: python3
+          - name: "macOS 10.15 (Catalina)"
+            os: macos-10.15
+            ci_type: brew
+            python: /usr/local/bin/python3
+            cmake_options: "-DPYTHON_EXECUTABLE=/usr/local/bin/python3"
+          - name: "Window Server 2019"
+            os: windows-latest
+            ci_type: windows
+            python: python
     steps:
-      - name: Configure environment
-        # shell: cmd
-        # $Env:
+      - name: Configure environment (Unix)
+        if: ${{ !contains(matrix.os, "windows") }}
+        run: |
+          echo "WORKSPACE=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
+          echo "PYTHON=${{ matrix.python }}" >> $GITHUB_ENV
+          echo "CMAKE_OPTIONS=${{ matrix.cmake_options }}" >> $GITHUB_ENV
+      - name: Configure environment (Windows)
+        if: ${{ contains(matrix.os, "windows") }}
         run: |
           echo "WORKSPACE=$Env:GITHUB_WORKSPACE" >> $Env:GITHUB_ENV
           echo "PYTHON=python" >> $Env:GITHUB_ENV
-      - name: Clone source
-        uses: actions/checkout@v2
-        with:
-          repository: lamyj/sycomore
+      
       - name: Setup conda
+        if: ${{ contains(matrix.os, "windows") }}
         run: C:\Miniconda\condabin\conda.bat init powershell
-      - uses: seanmiddleditch/gha-setup-vsdevenv@master
-      - name: Install
-        # #C:\Miniconda\condabin\conda.bat activate base
-        run: C:\Miniconda\condabin\conda.bat install --yes -c conda-forge boost cmake ninja numpy pybind11 xsimd
-      - name: Build
-        # C:\Miniconda\condabin\conda.bat activate base
-        # Get-ChildItem -Path Env:\
-        # NOTE: Ninja generator uses a version of Clang shipped by MSVC which
-        # fails with xsimd.
-        run: .ci\windows\build.cmd
-      - name: Test
-        run: .ci\windows\post_build.cmd
+      - name: Set up dev environment
+        if: ${{ contains(matrix.os, "windows") }}
+        uses: seanmiddleditch/gha-setup-vsdevenv@master
+      
+      - name: Checkout latest revision
+        uses: actions/checkout@v2
+      
+      - name: Start the worker
+        run: ${{ matrix.start_worker }}
+      - name: Configure the build
+        run: ${{ matrix.worker }} ./.ci/${{ matrix.ci_type}}/install
+      - name: Build Sycomore
+        run: ${{ matrix.worker }} ./.ci/${{ matrix.ci_type}}/build
+      - name: Run tests
+        run: ${{ matrix.worker }} ./.ci/${{ matrix.ci_type}}/post_build
+      - name: Stop the worker
+        run: ${{ matrix.stop_worker }}
