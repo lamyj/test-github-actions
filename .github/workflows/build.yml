@@ -47,7 +47,7 @@ jobs:
             ci_type: windows
             python: python
     env:
-      WORKSPACE: "${{ env.GITHUB_WORKSPACE }}"
+      WORKSPACE: "${{ github.workspace }}"
       PYTHON: "${{ matrix.python }}"
       CMAKE_OPTIONS: "${{ matrix.cmake_options }}"
     steps:
