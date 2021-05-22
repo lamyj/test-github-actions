@@ -48,7 +48,7 @@ jobs:
             python: python
     env:
       WORKSPACE: "${{ env.GITHUB_WORKSPACE }}"
-      PYTHON: "${{ matrix.python }"
+      PYTHON: "${{ matrix.python }}"
       CMAKE_OPTIONS: "${{ matrix.cmake_options }}"
     steps:
       - name: Setup conda
