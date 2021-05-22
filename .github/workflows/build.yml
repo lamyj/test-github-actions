@@ -48,22 +48,22 @@ jobs:
             python: python
     steps:
       - name: Configure environment (Unix)
-        if: ${{ !contains(matrix.os, "windows") }}
+        if: ${{ !contains(matrix.os, 'windows') }}
         run: |
           echo "WORKSPACE=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
           echo "PYTHON=${{ matrix.python }}" >> $GITHUB_ENV
           echo "CMAKE_OPTIONS=${{ matrix.cmake_options }}" >> $GITHUB_ENV
       - name: Configure environment (Windows)
-        if: ${{ contains(matrix.os, "windows") }}
+        if: ${{ contains(matrix.os, 'windows') }}
         run: |
           echo "WORKSPACE=$Env:GITHUB_WORKSPACE" >> $Env:GITHUB_ENV
           echo "PYTHON=python" >> $Env:GITHUB_ENV
       
       - name: Setup conda
-        if: ${{ contains(matrix.os, "windows") }}
+        if: ${{ contains(matrix.os, 'windows') }}
         run: C:\Miniconda\condabin\conda.bat init powershell
       - name: Set up dev environment
-        if: ${{ contains(matrix.os, "windows") }}
+        if: ${{ contains(matrix.os, 'windows') }}
         uses: seanmiddleditch/gha-setup-vsdevenv@master
       
       - name: Checkout latest revision
