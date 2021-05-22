@@ -68,6 +68,8 @@ jobs:
       
       - name: Checkout latest revision
         uses: actions/checkout@v2
+        with:
+          repository: lamyj/sycomore
       
       - name: Start the worker
         run: ${{ matrix.start_worker }}
