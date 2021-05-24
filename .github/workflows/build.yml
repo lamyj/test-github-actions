@@ -3,7 +3,8 @@ on: [push, create]
 
 jobs:
   build:
-    name: Build wheels
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout latest revision
         uses: actions/checkout@v2
