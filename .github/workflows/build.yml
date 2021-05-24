@@ -20,6 +20,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: lamyj/sycomore
+          fetch-depth: 0
       - name: Start the worker
         run: |
           docker run -di -v ${WORKSPACE}:${WORKSPACE} --name worker --rm quay.io/pypa/manylinux${{ matrix.tag }}_x86_64:latest
