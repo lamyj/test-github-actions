@@ -9,8 +9,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: { "Python 3.6", python: /opt/python/cp36-cp36m/bin/python, tag: 2010_x86_64 }
-          - name: { "Python 3.7", python: /opt/python/cp37-cp37m/bin/python, tag: 2010_x86_64 }
+          - { name: "Python 3.6", python: /opt/python/cp36-cp36m/bin/python, tag: 2010_x86_64 }
+          - { name: "Python 3.7", python: /opt/python/cp37-cp37m/bin/python, tag: 2010_x86_64 }
     
     env:
       WORKSPACE: "${{ github.workspace }}"
