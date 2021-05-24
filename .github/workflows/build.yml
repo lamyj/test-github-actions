@@ -3,16 +3,14 @@ on: [push, create]
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     name: ${{ matrix.name }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - name: "Python 3.7"
-            os: ubuntu-latest
-            python: /opt/python/cp37-cp37m/bin/python
-            image: quay.io/pypa/manylinux2010_x86_64:latest
+          - name: { "Python 3.6", python: /opt/python/cp36-cp36m/bin/python, tag: 2010_x86_64 }
+          - name: { "Python 3.7", python: /opt/python/cp37-cp37m/bin/python, tag: 2010_x86_64 }
     
     env:
       WORKSPACE: "${{ github.workspace }}"
@@ -24,7 +22,7 @@ jobs:
           repository: lamyj/sycomore
       - name: Start the worker
         run: |
-          docker run -di -v ${WORKSPACE}:${WORKSPACE} --name worker --rm ${{ matrix.image }}
+          docker run -di -v ${WORKSPACE}:${WORKSPACE} --name worker --rm quay.io/pypa/manylinux${{ matrix.tag }}_x86_64:latest
       - name: Get xsimd
         run: |
           docker exec -w ${WORKSPACE} worker curl -LO https://github.com/xtensor-stack/xsimd/archive/refs/tags/7.5.0.tar.gz
@@ -42,5 +40,9 @@ jobs:
       - name: Build wheel
         run: |
           docker exec -w ${WORKSPACE} worker ${{ matrix.python }} setup.py bdist_wheel
+      - name: Test the package
+        run: |
+          docker exec -w ${WORKSPACE} worker ${{ matrix.python }} -m pip install dist/*whl
+          docker exec -w ${WORKSPACE} worker ${{ matrix.python }} -c 'import sycomore; sycomore.gamma'
       - name: Stop the worker
         run: docker kill worker
