@@ -36,6 +36,7 @@ jobs:
           import subprocess
           
           import cibuildwheel
+          import cibuildwheel.architecture
           import cibuildwheel.macos
           configurations = cibuildwheel.macos.get_python_configurations(
               cibuildwheel.util.BuildSelector(build_config="cp3*", skip_config=""), 
