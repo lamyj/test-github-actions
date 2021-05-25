@@ -46,7 +46,7 @@ jobs:
               path = cibuildwheel.macos.install_cpython(
                 configuration.version, configuration.url)
               subprocess.check_call(["ls", path])
-              python = os.path.join(path, "python")
+              python = os.path.join(path, "python3")
               subprocess.check_call([python, "--version"])
               subprocess.check_call([python, "setup.py", "bdist_wheel"])
       - name: Archive wheels
