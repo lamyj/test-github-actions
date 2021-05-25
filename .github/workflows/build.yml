@@ -3,8 +3,14 @@ on: [push, create]
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
-    name: Build wheels
+    runs-on: ubuntu-latest
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: "Python 3.8", python: /opt/python/cp38-cp38/bin/python, tag: 2010 }
+          - { name: "Python 3.9", python: /opt/python/cp39-cp39/bin/python, tag: 2010 }
     env:
       WORKSPACE: "${{ github.workspace }}"
     steps:
@@ -13,26 +19,21 @@ jobs:
         with:
           repository: lamyj/sycomore
           fetch-depth: 0
-      - name: Get xsimd
+      - name: Start the worker
         run: |
-          curl -LO https://github.com/xtensor-stack/xsimd/archive/refs/tags/7.5.0.tar.gz
-          tar -x -z -f 7.5.0.tar.gz
-          cd xsimd-7.5.0
-          cmake -DCMAKE_INSTALL_PREFIX=/usr/local .
-          sudo make install
-          rm -rf xsimd-7.5.0 7.5.0.tar.gz
-      - name: Get pybind11
+          docker run -di -v ${WORKSPACE}:${WORKSPACE} --name worker --rm quay.io/pypa/manylinux${{ matrix.tag }}_x86_64:latest
+      - name: Provision environment
         run: |
-          curl -LO https://github.com/pybind/pybind11/archive/refs/tags/v2.6.2.tar.gz
-          tar -x -z -f v2.6.2.tar.gz
-          cd pybind11-2.6.2
-          cmake -DPYBIND11_TEST=OFF -DCMAKE_INSTALL_PREFIX=/usr/local .
-          sudo make install
-          rm -rf pybind11-2.6.2 v2.6.2.tar.gz
-      - name: Build wheels
-        uses: joerick/cibuildwheel@v1.11.0
-        env:
-          CIBW_BUILD: cp39*
+          docker exec -w ${WORKSPACE} ./.ci/wheels/provision.sh
+      - name: Build wheel
+        run: |
+          docker exec -w ${WORKSPACE} worker ${{ matrix.python }} setup.py bdist_wheel
+      - name: Test the package
+        run: |
+          docker exec -w ${WORKSPACE} worker ${{ matrix.python }} -m pip install dist/*whl
+          docker exec -w ${WORKSPACE} worker ${{ matrix.python }} -c 'import sycomore; sycomore.gamma'
+      - name: Stop the worker
+        run: docker kill worker
       - name: Archive wheels
         uses: actions/upload-artifact@v2
         with:
