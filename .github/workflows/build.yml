@@ -43,7 +43,8 @@ jobs:
               [cibuildwheel.architecture.Architecture.x86_64])
           print(configurations)
           for configuration in configurations:
-              path = install_cpython(configuration.version, configuration.url)
+              path = cibuildwheel.macos.install_cpython(
+                configuration.version, configuration.url)
               python = os.path.join(path, "python")
               subprocess.check_call([python, "--version"])
               subprocess.check_call([python, "setup.py", "bdist_wheel"])
