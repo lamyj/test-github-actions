@@ -12,7 +12,7 @@ jobs:
           fetch-depth: 0
       - name: Get cibuildwheel
         # FIXME?
-        run: pip install cibuildwheel
+        run: python3 -m pip install cibuildwheel
       - name: Get xsimd
         run: |
           curl -LO https://github.com/xtensor-stack/xsimd/archive/refs/tags/7.5.0.tar.gz
@@ -30,7 +30,7 @@ jobs:
           make install
           rm -rf pybind11-2.6.2 v2.6.2.tar.gz
       - name: Build wheels
-        shell: python
+        shell: "python3 {0}"
         run: |
           import os
           import subprocess
