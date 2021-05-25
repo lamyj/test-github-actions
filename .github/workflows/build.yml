@@ -4,6 +4,20 @@ on: [push, create]
 jobs:
   build:
     runs-on: macos-10.15
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: "Python 3.5", python: cp35 }
+          - { name: "Python 3.6", python: cp36 }
+          - { name: "Python 3.7", python: cp37 }
+          - { name: "Python 3.8", python: cp38 }
+          - { name: "Python 3.9", python: cp39 }
+          - { name: "Python 3.10", python: cp40 }
+    env:
+      WORKSPACE: "${{ github.workspace }}"
+      MACOSX_DEPLOYMENT_TARGET: "10.9"
     steps:
       - name: Checkout latest revision
         uses: actions/checkout@v2
@@ -11,7 +25,6 @@ jobs:
           repository: lamyj/sycomore
           fetch-depth: 0
       - name: Get cibuildwheel
-        # FIXME?
         run: python3 -m pip install cibuildwheel
       - name: Get xsimd
         run: |
@@ -38,7 +51,7 @@ jobs:
           import cibuildwheel
           import cibuildwheel.macos
           configurations = cibuildwheel.macos.get_python_configurations(
-              cibuildwheel.util.BuildSelector(build_config="cp3*", skip_config=""), 
+              cibuildwheel.util.BuildSelector(build_config="${{ matrix.python }}*", skip_config=""), 
               [cibuildwheel.architecture.Architecture.x86_64])
           print(configurations)
           for configuration in configurations:
