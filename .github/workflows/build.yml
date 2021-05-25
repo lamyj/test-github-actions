@@ -36,7 +36,6 @@ jobs:
           import subprocess
           
           import cibuildwheel
-          import cibuildwheel.architecture
           import cibuildwheel.macos
           configurations = cibuildwheel.macos.get_python_configurations(
               cibuildwheel.util.BuildSelector(build_config="cp3*", skip_config=""), 
@@ -45,11 +44,13 @@ jobs:
           for configuration in configurations:
               path = cibuildwheel.macos.install_cpython(
                 configuration.version, configuration.url)
-              print(path)
               subprocess.check_call(["ls", path])
-              #python = os.path.join(path, "python3")
-              #subprocess.check_call([python, "--version"])
-              #subprocess.check_call([python, "setup.py", "bdist_wheel"])
+              python = os.path.join(path, "python3")
+              pip = os.path.join(path, "pip3")
+              subprocess.check_call([python, "--version"])
+              subprocess.check_call([python, "-m", "pip", "install", "--force-reinstall"", "pip"])
+              subprocess.check_call([pip, "install", "setuptools", "wheel"])
+              subprocess.check_call([python, "setup.py", "bdist_wheel"])
       - name: Archive wheels
         uses: actions/upload-artifact@v2
         with:
