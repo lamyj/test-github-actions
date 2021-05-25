@@ -13,6 +13,7 @@ jobs:
           - { name: "Python 3.9", python: cp39 }
     env:
       WORKSPACE: "${{ github.workspace }}"
+      MACOSX_DEPLOYMENT_TARGET: "10.9"
     steps:
       - name: Checkout latest revision
         uses: actions/checkout@v2
