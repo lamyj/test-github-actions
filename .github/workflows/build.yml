@@ -3,29 +3,16 @@ on: [push, create]
 
 jobs:
   build:
-    runs-on: macos-10.15
-    name: ${{ matrix.name }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { name: "Python 3.5", python: cp35 }
-          - { name: "Python 3.6", python: cp36 }
-          - { name: "Python 3.7", python: cp37 }
-          - { name: "Python 3.8", python: cp38 }
-          - { name: "Python 3.9", python: cp39 }
-          - { name: "Python 3.10", python: cp40 }
+    runs-on: ubuntu-20.04
+    name: Build wheels
     env:
       WORKSPACE: "${{ github.workspace }}"
-      MACOSX_DEPLOYMENT_TARGET: "10.9"
     steps:
       - name: Checkout latest revision
         uses: actions/checkout@v2
         with:
           repository: lamyj/sycomore
           fetch-depth: 0
-      - name: Get cibuildwheel
-        run: python3 -m pip install cibuildwheel
       - name: Get xsimd
         run: |
           curl -LO https://github.com/xtensor-stack/xsimd/archive/refs/tags/7.5.0.tar.gz
@@ -43,27 +30,9 @@ jobs:
           make install
           rm -rf pybind11-2.6.2 v2.6.2.tar.gz
       - name: Build wheels
-        shell: "python3 {0}"
-        run: |
-          import os
-          import subprocess
-          
-          import cibuildwheel
-          import cibuildwheel.macos
-          configurations = cibuildwheel.macos.get_python_configurations(
-              cibuildwheel.util.BuildSelector(build_config="${{ matrix.python }}*", skip_config=""), 
-              [cibuildwheel.architecture.Architecture.x86_64])
-          print(configurations)
-          for configuration in configurations:
-              path = cibuildwheel.macos.install_cpython(
-                configuration.version, configuration.url)
-              subprocess.check_call(["ls", path])
-              python = os.path.join(path, "python3")
-              pip = os.path.join(path, "pip3")
-              subprocess.check_call([python, "--version"])
-              subprocess.check_call([python, "-m", "pip", "install", "--force-reinstall", "pip"])
-              subprocess.check_call([pip, "install", "setuptools", "wheel", "setuptools_scm"])
-              subprocess.check_call([python, "setup.py", "bdist_wheel"])
+        uses: joerick/cibuildwheel@v1.11.0
+        env:
+          CIBW_BUILD: cp39*
       - name: Archive wheels
         uses: actions/upload-artifact@v2
         with:
