@@ -3,25 +3,49 @@ on: [push, create]
 
 jobs:
   build:
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-20.04, windows-2019, macos-10.15]
+    runs-on: macos-10.15
     steps:
       - name: Checkout latest revision
         uses: actions/checkout@v2
         with:
           repository: lamyj/sycomore
           fetch-depth: 0
+      - name: Get cibuildwheel
+        # FIXME?
+        run: python3 -m pip install cibuildwheel
+      - name: Get xsimd
+        run: |
+          curl -LO https://github.com/xtensor-stack/xsimd/archive/refs/tags/7.5.0.tar.gz
+          tar -x -z -f 7.5.0.tar.gz 
+          cmake -DCMAKE_INSTALL_PREFIX=/usr/local .
+          make install
+          rm -rf xsimd-7.5.0 7.5.0.tar.gz
+      - name: Get pybind11
+        run: |
+          curl -LO https://github.com/pybind/pybind11/archive/refs/tags/v2.6.2.tar.gz
+          tar -x -z -f v2.6.2.tar.gz
+          cmake -DPYBIND11_TEST=OFF -DCMAKE_INSTALL_PREFIX=/usr/local .
+          make install
+          rm -rf pybind11-2.6.2 v2.6.2.tar.gz
       - name: Build wheels
-        uses: joerick/cibuildwheel@v1.11.0
-        env:
-          CIBW_SKIP: cp27-*
-        # to supply options, put them in 'env', like:
-        # env:
-        #   CIBW_SOME_OPTION: value
-
-
-
+        shell: python3
+        run: |
+          import os
+          import subprocess
+          
+          import cibuildwheel
+          import cibuildwheel.macos
+          configurations = cibuildwheel.macos.get_python_configurations(
+              cibuildwheel.util.BuildSelector(build_config="cp3*", skip_config=""), 
+              [cibuildwheel.architecture.Architecture.x86_64])
+          print(configurations)
+          for configuration in configurations:
+              path = install_cpython(configuration.version, configuration.url)
+              python = os.path.join(path, "python")
+              subprocess.check_call([python, "--version"])
+              subprocess.check_call([python, "setup.py", "bdist_wheel"])
+      - name: Archive wheels
+        uses: actions/upload-artifact@v2
+        with:
+          name: wheels
+          path: dist/*whl
