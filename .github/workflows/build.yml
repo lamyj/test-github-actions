@@ -19,7 +19,7 @@ jobs:
           tar -x -z -f 7.5.0.tar.gz
           cd xsimd-7.5.0
           cmake -DCMAKE_INSTALL_PREFIX=/usr/local .
-          make install
+          sudo make install
           rm -rf xsimd-7.5.0 7.5.0.tar.gz
       - name: Get pybind11
         run: |
@@ -27,7 +27,7 @@ jobs:
           tar -x -z -f v2.6.2.tar.gz
           cd pybind11-2.6.2
           cmake -DPYBIND11_TEST=OFF -DCMAKE_INSTALL_PREFIX=/usr/local .
-          make install
+          sudo make install
           rm -rf pybind11-2.6.2 v2.6.2.tar.gz
       - name: Build wheels
         uses: joerick/cibuildwheel@v1.11.0
