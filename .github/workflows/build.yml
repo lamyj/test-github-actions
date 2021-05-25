@@ -45,6 +45,7 @@ jobs:
           for configuration in configurations:
               path = cibuildwheel.macos.install_cpython(
                 configuration.version, configuration.url)
+              subprocess.check_call(["ls", path])
               python = os.path.join(path, "python")
               subprocess.check_call([python, "--version"])
               subprocess.check_call([python, "setup.py", "bdist_wheel"])
