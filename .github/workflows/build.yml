@@ -30,7 +30,7 @@ jobs:
           make install
           rm -rf pybind11-2.6.2 v2.6.2.tar.gz
       - name: Build wheels
-        shell: python3
+        shell: python
         run: |
           import os
           import subprocess
