@@ -49,7 +49,7 @@ jobs:
               pip = os.path.join(path, "pip3")
               subprocess.check_call([python, "--version"])
               subprocess.check_call([python, "-m", "pip", "install", "--force-reinstall", "pip"])
-              subprocess.check_call([pip, "install", "setuptools", "wheel"])
+              subprocess.check_call([pip, "install", "setuptools", "wheel", "setuptools_scm"])
               subprocess.check_call([python, "setup.py", "bdist_wheel"])
       - name: Archive wheels
         uses: actions/upload-artifact@v2
