@@ -11,8 +11,8 @@ jobs:
         include:
           - { os: "macos-10.15", name: "3.8", runner: "" }
           - { os: "macos-10.15", name: "3.9", runner: "" }
-          - { os: "ubuntu-20.04", name: "3.8", runner: "docker run -ti --rm quay.io/pypa/manylinux2010_x86_64" }
-          - { os: "ubuntu-20.04", name: "3.9", runner: "docker run -ti --rm quay.io/pypa/manylinux2010_x86_64" }
+          - { os: "ubuntu-20.04", name: "3.8", runner: "docker run --rm quay.io/pypa/manylinux2010_x86_64" }
+          - { os: "ubuntu-20.04", name: "3.9", runner: "docker run --rm quay.io/pypa/manylinux2010_x86_64" }
     env:
       MACOSX_DEPLOYMENT_TARGET: "10.9"
     steps:
