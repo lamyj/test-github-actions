@@ -16,7 +16,7 @@ jobs:
             stop_worker: "docker kill worker"
           - name: "3.9"
             os: "ubuntu-latest"
-            start_worker: "docker run -di -v ${WORKSPACE}:${WORKSPACE} --name worker --rm quay.io/pypa/manylinux2010_x86_64"
+            start_worker: "docker run -di -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} --name worker --rm quay.io/pypa/manylinux2010_x86_64"
             worker: "docker exec worker"
             stop_worker: "docker kill worker"
           - name: "3.8"
@@ -38,11 +38,17 @@ jobs:
         run: |
           PYTHON_ROOT=$(python3 ./.ci/wheels/setup_python.py '${{ matrix.name }}' | tail -n 1)
           echo "PYTHON_ROOT=$PYTHON_ROOT" >> $GITHUB_ENV
-      - name: Python
+      - name: Provision
         run: |
-          echo "Python root: $PYTHON_ROOT"
-          ${{ matrix.worker }} ls $PYTHON_ROOT
-          ${{ matrix.worker }} $PYTHON_ROOT/python --version
-          ${{ matrix.worker }} $PYTHON_ROOT/pip
+          ${{ matrix.worker }} ./.ci/wheels/provision.sh
+          ${{ matrix.worker }} $PYTHON_ROOT/python -m pip install --force-reinstall pip
+          ${{ matrix.worker }} $PYTHON_ROOT/python -m pip install setuptools wheel setuptools_scm
+      - name: Build wheel
+        run: |
+          ${{ matrix.worker }} $PYTHON_ROOT/python -m pip wheel .
+      - name: Test wheel
+        run: |
+          ${{ matrix.worker }} $PYTHON_ROOT/python -m pip install --no-index --find-links=dist sycomore
+          ${{ matrix.worker }} $PYTHON_ROOT/python -c 'import sycomore; sycomore.gamma'
       - name: Stop the worker
         run: ${{ matrix.stop_worker }}
