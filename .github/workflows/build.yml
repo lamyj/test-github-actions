@@ -20,4 +20,4 @@ jobs:
           repository: lamyj/sycomore
           fetch-depth: 0
       - name: Provision environment
-        run: python3 ./.ci/wheels/setup_python.py '${{ matrix.python }}'
+        run: python3 ./.ci/wheels/setup_python.py '${{ matrix.name }}'
