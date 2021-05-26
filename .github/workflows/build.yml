@@ -9,6 +9,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - name: "3.6"
+            os: "ubuntu-latest"
+            start_worker: "docker run -di -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} --name worker --rm quay.io/pypa/manylinux2010_x86_64"
+            worker: "docker exec worker"
+            stop_worker: "docker kill worker"
+          - name: "3.7"
+            os: "ubuntu-latest"
+            start_worker: "docker run -di -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} --name worker --rm quay.io/pypa/manylinux2010_x86_64"
+            worker: "docker exec worker"
+            stop_worker: "docker kill worker"
           - name: "3.8"
             os: "ubuntu-latest"
             start_worker: "docker run -di -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} --name worker --rm quay.io/pypa/manylinux2010_x86_64"
@@ -19,6 +29,10 @@ jobs:
             start_worker: "docker run -di -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} --name worker --rm quay.io/pypa/manylinux2010_x86_64"
             worker: "docker exec worker"
             stop_worker: "docker kill worker"
+          - name: "3.6"
+            os: "macos-latest"
+          - name: "3.7"
+            os: "macos-latest"
           - name: "3.8"
             os: "macos-latest"
           - name: "3.9"
@@ -52,3 +66,8 @@ jobs:
           ${{ matrix.worker }} $PYTHON_ROOT/python -c 'import sycomore; sycomore.gamma'
       - name: Stop the worker
         run: ${{ matrix.stop_worker }}
+      - name: Archive wheels
+        uses: actions/upload-artifact@v2
+        with:
+          name: wheels
+          path: dist/*whl
