@@ -20,4 +20,10 @@ jobs:
           repository: lamyj/sycomore
           fetch-depth: 0
       - name: Provision environment
-        run: python3 ./.ci/wheels/setup_python.py '${{ matrix.name }}'
+        run: |
+          PYTHON_ROOT=$(python3 ./.ci/wheels/setup_python.py '${{ matrix.name }}' | tail -n 1)
+          echo "PYTHON_ROOT=$PYTHON_ROOT" >> $GITHUB_ENV
+      - name: Python
+        run: |
+          echo "Python root: $PYTHON_ROOT"
+          ls $PYTHON_ROOT
