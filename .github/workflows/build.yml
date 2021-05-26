@@ -28,6 +28,6 @@ jobs:
       - name: Python
         run: |
           echo "Python root: $PYTHON_ROOT"
-          ls $PYTHON_ROOT
+          ${{ matrix.runner }} ls $PYTHON_ROOT
           ${{ matrix.runner }} $PYTHON_ROOT/python --version
           ${{ matrix.runner }} $PYTHON_ROOT/pip
