@@ -3,14 +3,16 @@ on: [push, create]
 
 jobs:
   build:
-    runs-on: macos-10.15
-    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} ${{ matrix.name }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - { name: "3.8" }
-          - { name: "3.9" }
+          - { os: "macos-10.15", name: "3.8" }
+          - { os: "macos-10.15", name: "3.9" }
+          - { os: "ubuntu-20.04", name: "3.8" }
+          - { os: "ubuntu-20.04", name: "3.9" }
     env:
       MACOSX_DEPLOYMENT_TARGET: "10.9"
     steps:
@@ -27,3 +29,5 @@ jobs:
         run: |
           echo "Python root: $PYTHON_ROOT"
           ls $PYTHON_ROOT
+          $PYTHON_ROOT/bin/python --version
+          $PYTHON_ROOT/bin/pip
