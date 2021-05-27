@@ -27,7 +27,7 @@ jobs:
           import site
           import subprocess
           import sys
-          print(sys.version, sys.executable)
+          print(sys.version, sys.executable, site.USER_BASE)
           subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", "cmake"])
           subprocess.check_call([sys.executable, "-m", "pip", "show", "--files", "cmake"])
           subprocess.check_call([os.path.join(site.USER_BASE, "bin", "cmake")])
