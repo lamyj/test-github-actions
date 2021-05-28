@@ -74,12 +74,10 @@ jobs:
                   raise NotImplementedError(
                       "Unknown interpreter version: {0}".format(version))
 
-              nuget = pathlib.Path("C:\\cibw\\nuget.exe")
-              if not nuget.exists():
-                  cibuildwheel.util.download(
-                      "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe", nuget)
-
-              path = cibuildwheel.windows.install_cpython(version, "64", nuget)
-              print(path)
+              subprocess.check_call([
+                  "nuget", "install", "python", 
+                  "-Version", version, "-OutputDirectory", "C:\\wheel_python", 
+                  "-Verbosity", "quiet"])
+              print("C:\\wheel_python")
           else:
               raise NotImplementedError(sys.platform)
