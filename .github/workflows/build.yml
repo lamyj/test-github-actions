@@ -35,5 +35,5 @@ jobs:
               os.path.join(site.USER_SITE, "../Scripts")])
           subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", "cmake"])
           subprocess.check_call([sys.executable, "-m", "pip", "show", "--files", "cmake"])
-          subprocess.check_call(["env"])
-          subprocess.check_call([os.path.join("cmake", "--version")], env=os.environ)
+          subprocess.check_call(["cmake", "--version"], env=os.environ)
+          subprocess.check_call(["cmake", "--version"])
