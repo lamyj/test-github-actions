@@ -24,7 +24,7 @@ jobs:
         run: |
           python3 -m pip install cibuildwheel
       - name: xxx
-        shell: "python3 {0}"
+        shell: "python3 {0} 3.9"
         run: |
             import sys
 
