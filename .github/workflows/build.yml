@@ -18,8 +18,10 @@ jobs:
         with:
           repository: lamyj/sycomore
           fetch-depth: 0
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      # - name: Set up Python
+      #   uses: actions/setup-python@v2
+      - name: Set-up Python
+        run: python3 --version
       - name: Install cmake
         shell: python
         run: |
@@ -37,7 +39,7 @@ jobs:
 
           subprocess.check_call([
               sys.executable, "-m", "pip", "install", "--user", 
-              "setuptools", "wheel", "setuptools_scm",
+              "setuptools", "wheel", "setuptools_scm", "cibuildwheel",
               "cmake", "pybind11"])
 
           os.environ["PATH"] = os.pathsep.join([
