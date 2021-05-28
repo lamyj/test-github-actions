@@ -67,7 +67,7 @@ jobs:
                     "3.8": "3.8.10",
                     "3.9": "3.9.5",
                 }
-                if version not in urls:
+                if version not in versions:
                     raise NotImplementedError("Unknown interpreter version: {0}".format(version))
                 
                 nuget = Path("C:\\cibw\\nuget.exe")
