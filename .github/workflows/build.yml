@@ -27,13 +27,22 @@ jobs:
           import site
           import subprocess
           import sys
-          print(sys.version, sys.executable, site.USER_BASE)
-          # Add site.USER_BASE/bin and site.USER_SITE/../Scripts to PATH
+          
+          subprocess.check_call([
+              sys.executable, "-m", "pip", "install", "--force-reinstall", "pip"])
+          
+          subprocess.check_call([
+              sys.executable, "-m", "pip", "install", "--user", 
+              "setuptools", "wheel", "setuptools_scm",
+              "cmake", "pybind11"])
+          
+          subprocess.check_call([
+              sys.executable, "-m", "pip", "show", "--files", "pybind11"])
+          
           os.environ["PATH"] = os.pathsep.join([
               os.environ["PATH"], 
               os.path.join(site.USER_BASE, "bin"),
               os.path.join(site.USER_SITE, "../Scripts")])
-          subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", "cmake"])
-          subprocess.check_call([sys.executable, "-m", "pip", "show", "--files", "cmake"])
-          subprocess.check_call(["cmake", "--version"], env=os.environ)
-          subprocess.check_call(["cmake", "--version"])
+              
+          #subprocess.check_call(["cmake", "--version"], env=os.environ)
+          #subprocess.check_call(["cmake", "--version"])
