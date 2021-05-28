@@ -23,9 +23,9 @@ jobs:
       - name: Set-up Python
         run: |
           python3 -m pip install cibuildwheel
-     - name: xxx
-       shell: "python3 {0}"
-       run: |
+      - name: xxx
+        shell: "python3 {0}"
+        run: |
             import sys
 
             import cibuildwheel.macos
