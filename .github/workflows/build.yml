@@ -23,7 +23,8 @@ jobs:
       - name: Set-up Python
         run: |
           python3 -m pip install cibuildwheel
-     - shell: python3 {0}
+     - name: xxx
+       shell: "python3 {0}"
        run: |
             import sys
 
