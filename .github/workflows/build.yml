@@ -62,8 +62,8 @@ jobs:
                   raise NotImplementedError("Unknown interpreter version: {0}".format(version))
 
               with tempfile.TemporaryDirectory() as directory:
-                  data = urllib.request.urlopen(url).read()
-                  path = os.path.join(directory, url.split("/")[-1])
+                  data = urllib.request.urlopen(urls[version]).read()
+                  path = os.path.join(directory, urls[version].split("/")[-1])
                   with open(path, "wb") as fd:
                       fd.write(data)
                   subprocess.check_call(["sudo", "installer", "-pkg", path])
