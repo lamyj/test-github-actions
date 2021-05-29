@@ -81,8 +81,7 @@ jobs:
                   "-Version", version, "-OutputDirectory", "C:\\wheel_python", 
                   "-Verbosity", "quiet"])
               import glob
-              print(glob.glob(os.path.join(
-                  "C:", "wheel_python", "python.{}".format(version), "**"), recursive=True))
-              print("C:\\wheel_python")
+              print(os.listdir(os.path.join(
+                  "C:", "wheel_python", "python.{}".format(version))))
           else:
               raise NotImplementedError(sys.platform)
