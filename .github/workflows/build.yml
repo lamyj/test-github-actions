@@ -20,10 +20,7 @@ jobs:
           fetch-depth: 0
       # - name: Set up Python
       #   uses: actions/setup-python@v2
-      - name: Set-up Python
-        run: |
-          python3 -m pip install cibuildwheel
-      - name: xxx
+      - name: Set up Python
         shell: "python3 {0} 3.9"
         run: |
           import os
@@ -31,8 +28,6 @@ jobs:
           import sys
           import tempfile
           import urllib.request
-
-          # import cibuildwheel.macos
 
           version = sys.argv[1]
 
@@ -48,10 +43,9 @@ jobs:
                   raise NotImplementedError(
                       "Unknown interpreter version: {0}".format(version))
 
-              print(roots[version])
+              print(os.path.join(roots[version], "python"))
           elif sys.platform == "darwin":
               # Assume x86_64
-              # From https://github.com/pypa/cibuildwheel/blob/v1.11.0/cibuildwheel/resources/build-platforms.toml#L37-L50
               urls = {
                   "3.6": "https://www.python.org/ftp/python/3.6.8/python-3.6.8-macosx10.9.pkg",
                   "3.7": "https://www.python.org/ftp/python/3.7.9/python-3.7.9-macosx10.9.pkg",
@@ -68,13 +62,9 @@ jobs:
                       fd.write(data)
                   subprocess.check_call([
                       "sudo", "installer", "-pkg", path, "-target", "/"])
-                  import glob
-                  print(glob.glob(os.path.join(
-                      "/Library/Frameworks/Python.framework/Versions", version, "bin", "*")))
-
-              # # FIXME: download, then sudo installer -pkg XXX.pkg
-              # cibuildwheel.macos.install_cpython(version, urls[version])
-              # print(cibuildwheel.macos.SYMLINKS_DIR)
+              print(os.path.join(
+                  "/Library/Frameworks/Python.framework/Versions", version, "bin", 
+                  "python3"))
           elif sys.platform == "win32":
               versions = {
                   "3.6": "3.6.8",
@@ -90,6 +80,9 @@ jobs:
                   "nuget", "install", "python", 
                   "-Version", version, "-OutputDirectory", "C:\\wheel_python", 
                   "-Verbosity", "quiet"])
+              import glob
+              print(glob.glob(os.path.join(
+                  "C:", "wheel_python", "python.{}".format(version), "**"), recursive=True))
               print("C:\\wheel_python")
           else:
               raise NotImplementedError(sys.platform)
