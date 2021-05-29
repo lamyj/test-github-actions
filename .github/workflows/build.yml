@@ -81,6 +81,6 @@ jobs:
                   "-Version", version, "-OutputDirectory", "C:\\wheel_python", 
                   "-Verbosity", "quiet"])
               import glob
-              print(glob.glob(os.path.join("C:\\wheel_python", "**"), recursive=True))
+              print(glob.glob(os.path.join("C:\\wheel_python", "*", "tools", "python.exe")))
           else:
               raise NotImplementedError(sys.platform)
