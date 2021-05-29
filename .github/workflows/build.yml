@@ -68,6 +68,9 @@ jobs:
                       fd.write(data)
                   subprocess.check_call([
                       "sudo", "installer", "-pkg", path, "-target", "/"])
+                  import glob
+                  print(glob.glob(os.path.join(
+                      "/Library/Frameworks/Python.framework/Versions", version, "bin", "*")))
 
               # # FIXME: download, then sudo installer -pkg XXX.pkg
               # cibuildwheel.macos.install_cpython(version, urls[version])
