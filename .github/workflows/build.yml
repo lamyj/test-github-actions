@@ -82,6 +82,6 @@ jobs:
                   "-Verbosity", "quiet"])
               import glob
               print(os.listdir(os.path.join(
-                  "C:\\wheel_python", "python.{}".format(version))))
+                  "C:\\wheel_python")))
           else:
               raise NotImplementedError(sys.platform)
