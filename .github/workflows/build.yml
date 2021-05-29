@@ -26,13 +26,13 @@ jobs:
       - name: xxx
         shell: "python3 {0} 3.9"
         run: |
-          import pathlib
+          import os
           import subprocess
           import sys
+          import tempfile
+          import urllib.request
 
-          import cibuildwheel.macos
-          import cibuildwheel.util
-          import cibuildwheel.windows
+          # import cibuildwheel.macos
 
           version = sys.argv[1]
 
@@ -61,10 +61,17 @@ jobs:
               if version not in urls:
                   raise NotImplementedError("Unknown interpreter version: {0}".format(version))
 
-              cibuildwheel.macos.install_cpython(version, urls[version])
-              print(cibuildwheel.macos.SYMLINKS_DIR)
+              with tempfile.TemporaryDirectory() as directory:
+                  data = urllib.request.urlopen(url).read()
+                  path = os.path.join(directory, url.split("/")[-1])
+                  with open(path, "wb") as fd:
+                      fd.write(data)
+                  subprocess.check_call(["sudo", "installer", "-pkg", path])
+
+              # # FIXME: download, then sudo installer -pkg XXX.pkg
+              # cibuildwheel.macos.install_cpython(version, urls[version])
+              # print(cibuildwheel.macos.SYMLINKS_DIR)
           elif sys.platform == "win32":
-              # From https://github.com/pypa/cibuildwheel/blob/v1.11.0/cibuildwheel/resources/build-platforms.toml#L52-L68
               versions = {
                   "3.6": "3.6.8",
                   "3.7": "3.7.9",
