@@ -88,7 +88,14 @@ jobs:
 
           print(interpreter)
           if "GITHUB_ENV" in os.environ:
-              with open(os.environ["GITHUB_ENV"], "r") as fd:
-                  print(fd.read())
+              with open(os.environ["GITHUB_ENV"], "a") as fd:
+                  fd.write("PYTHON={}\n".format(interpreter))
           else:
               print("No environment file")
+      - name: Run Python
+        shell: "python3 {0}"
+        run: |
+          import os
+          print(os.environ.get("PYTHON", "no interpreter configured"))
+              
+        
