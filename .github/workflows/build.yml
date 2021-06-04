@@ -44,7 +44,9 @@ jobs:
                   raise NotImplementedError(
                       "Unknown interpreter version: {0}".format(version))
 
-              print(os.path.join(roots[version], "python"))
+              print(
+                  glob.glob(
+                      os.path.join(roots[version], "python")))
           elif sys.platform == "darwin":
               # Assume x86_64
               urls = {
@@ -63,9 +65,11 @@ jobs:
                       fd.write(data)
                   subprocess.check_call([
                       "sudo", "installer", "-pkg", path, "-target", "/"])
-              print(os.path.join(
-                  "/Library/Frameworks/Python.framework/Versions", version, "bin", 
-                  "python3"))
+              print(
+                  glob.glob(
+                      os.path.join(
+                          "/Library/Frameworks/Python.framework/Versions", version, "bin", 
+                          "python3")))
           elif sys.platform == "win32":
               versions = {
                   "3.6": "3.6.8",
