@@ -44,9 +44,7 @@ jobs:
                   raise NotImplementedError(
                       "Unknown interpreter version: {0}".format(version))
 
-              interpreter = glob.glob(
-                      os.path.join(roots[version], "python"))
-                  [0])
+              interpreter = glob.glob(os.path.join(roots[version], "python"))[0]
           elif sys.platform == "darwin":
               # Assume x86_64
               urls = {
@@ -65,11 +63,9 @@ jobs:
                       fd.write(data)
                   subprocess.check_call([
                       "sudo", "installer", "-pkg", path, "-target", "/"])
-              interpreter = glob.glob(
-                      os.path.join(
-                          "/Library/Frameworks/Python.framework/Versions", version, "bin", 
-                          "python3"))
-                      [0])
+
+              frameworks = "/Library/Frameworks/Python.framework/Versions"
+              interpreter = glob.glob(os.path.join(frameworks, version, "bin/python3"))[0]
           elif sys.platform == "win32":
               versions = {
                   "3.6": "3.6.8",
@@ -86,12 +82,10 @@ jobs:
                   "-Version", version, "-OutputDirectory", "C:\\wheel_python", 
                   "-Verbosity", "quiet"])
 
-              interpreter = glob.glob(
-                      os.path.join("C:\\wheel_python", "*", "tools", "python.exe")
-                  )[0]
+              interpreter = glob.glob("C:\\wheel_python\\*\\tools\\python.exe")[0]
           else:
               raise NotImplementedError(sys.platform)
-          
+
           print(interpreter)
           if "GITHUB_ENV" in os.environ:
               with open(os.environ["GITHUB_ENV"], "r") as fd:
