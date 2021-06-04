@@ -34,7 +34,7 @@ jobs:
       - name: Python version
         run: ${{ matrix.worker }} python --version
       - name: Set up Python
-        run: ${{ matrix.worker }} python3 .ci/wheels/setup_python.py ${{ matrix.python }}
+        run: ${{ matrix.worker }} python .ci/wheels/setup_python.py ${{ matrix.python }}
       - name: Run Python
         run: ${{ matrix.worker }} ${{ env.PYTHON }} --version        
       - name: Stop the worker
