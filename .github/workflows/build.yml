@@ -11,7 +11,7 @@ jobs:
         include:
           - os: "ubuntu-latest"
             python: "3.9"
-            start_worker: "docker run -di -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} --name worker --rm quay.io/pypa/manylinux2010_x86_64"
+            start_worker: "docker run -di -v ${WORKSPACE}:${WORKSPACE} -v ${GITHUB_ENV}:${GITHUB_ENV} -w ${WORKSPACE} --name worker --rm quay.io/pypa/manylinux2010_x86_64"
             worker: "docker exec -e GITHUB_ENV=${GITHUB_ENV} worker"
             stop_worker: "docker kill worker"
           - os: "macos-latest"
