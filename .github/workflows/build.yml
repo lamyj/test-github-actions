@@ -90,3 +90,5 @@ jobs:
           if "GITHUB_ENV" in os.environ:
               with open(os.environ["GITHUB_ENV"], "r") as fd:
                   print(fd.read())
+          else:
+              print("No environment file")
