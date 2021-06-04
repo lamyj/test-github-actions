@@ -31,6 +31,8 @@ jobs:
       #   uses: actions/setup-python@v2
       - name: Start the worker
         run: ${{ matrix.start_worker }}
+      - name: Python version
+        run: ${{ matrix.worker }} python --version
       - name: Set up Python
         run: ${{ matrix.worker }} python3 .ci/wheels/setup_python.py ${{ matrix.python }}
       - name: Run Python
