@@ -13,40 +13,30 @@ jobs:
           # NOTE manylinux1 has gcc 4.8, with no "is_trivially_copyable": 
           # use manylinux2010
           - { os: "ubuntu-latest", python: "3.6", container: quay.io/pypa/manylinux2010_x86_64 }
-          # - { os: "ubuntu-latest", python: "3.7", container: quay.io/pypa/manylinux2010_x86_64 }
-          # - { os: "ubuntu-latest", python: "3.8", container: quay.io/pypa/manylinux2010_x86_64 }
-          # - { os: "ubuntu-latest", python: "3.9", container: quay.io/pypa/manylinux2010_x86_64 }
-          # 
-          # - { os: "macos-latest", python: "3.6" }
-          # - { os: "macos-latest", python: "3.7" }
-          # - { os: "macos-latest", python: "3.8" }
-          # - { os: "macos-latest", python: "3.9" }
-          # 
-          # - { os: "windows-latest", python: "3.6" }
-          # - { os: "windows-latest", python: "3.7" }
-          # - { os: "windows-latest", python: "3.8" }
-          # - { os: "windows-latest", python: "3.9" }
+          - { os: "ubuntu-latest", python: "3.7", container: quay.io/pypa/manylinux2010_x86_64 }
+          - { os: "ubuntu-latest", python: "3.8", container: quay.io/pypa/manylinux2010_x86_64 }
+          - { os: "ubuntu-latest", python: "3.9", container: quay.io/pypa/manylinux2010_x86_64 }
+          
+          - { os: "macos-latest", python: "3.6" }
+          - { os: "macos-latest", python: "3.7" }
+          - { os: "macos-latest", python: "3.8" }
+          - { os: "macos-latest", python: "3.9" }
+          
+          - { os: "windows-latest", python: "3.6" }
+          - { os: "windows-latest", python: "3.7" }
+          - { os: "windows-latest", python: "3.8" }
+          - { os: "windows-latest", python: "3.9" }
     env:
       MACOSX_DEPLOYMENT_TARGET: "10.9"
     steps:
-      # NOTE manylinux2010 does not have a working nodejs
+      # NOTE manylinux2010 does not have a working nodejs. Use git and curl
+      # instead of actions
       - name: Checkout latest revision
         run: |
-            git --version
             git clone https://github.com/lamyj/sycomore.git .
       - name: Built-in Python version
         run: python -V
       - name: Build wheel
         run: python .ci/wheels/wheel.py ${{ matrix.python }}
-      # Action fails on manylinux, related to node.js
       - name: Archive wheels
-        run: |
-          pwd
-          ls
-          ls dist
-          curl -i -T dist/*whl -u ${{ secrets.UPLOAD_TOKEN }} ${{ secrets.UPLOAD_URL }}
-        # uses: actions/upload-artifact@v2
-        # with:
-        #   name: wheels
-        #   path: dist/*whl
-        #   ${{ secrets.UPLOAD_URL }}
+        run: curl -i -T dist/*whl -u ${{ secrets.UPLOAD_TOKEN }} ${{ secrets.UPLOAD_URL }}
