@@ -5,21 +5,21 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
-    name: ${{ matrix.os }} ${{ matrix.python }}
+    name: ${{ matrix.os }} ${{ matrix.python }} ${{ matrix.container }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: "ubuntu-latest"
-            python: "3.9"
-            #start_worker: "docker run -di -v ${WORKSPACE}:${WORKSPACE} -v ${GITHUB_ENV}:${GITHUB_ENV} -w ${WORKSPACE} --name worker --rm quay.io/pypa/manylinux2010_x86_64"
-            #worker: "docker exec -e GITHUB_ENV=${GITHUB_ENV} worker"
-            #stop_worker: "docker kill worker"
-            container: quay.io/pypa/manylinux2010_x86_64
-          - os: "macos-latest"
-            python: "3.9"
-          - os: "windows-latest"
-            python: 3.9
+          - os: { "ubuntu-latest", python: "3.7", container: quay.io/pypa/manylinux1_x86_64 }
+          - os: { "ubuntu-latest", python: "3.7", container: quay.io/pypa/manylinux2010_x86_64 }
+          # - os: { "ubuntu-latest", python: "3.8", container: quay.io/pypa/manylinux2010_x86_64 }
+          # - os: { "ubuntu-latest", python: "3.9", container: quay.io/pypa/manylinux2010_x86_64 }
+          - os: { "macos-latest", python: "3.7" }
+          - os: { "macos-latest", python: "3.8" }
+          # - os: { "macos-latest", python: "3.9" }
+          - os: { "windows-latest", python: "3.7" }
+          - os: { "windows-latest", python: "3.8" }
+          # - os: { "windows-latest", python: "3.9" }
     env:
       MACOSX_DEPLOYMENT_TARGET: "10.9"
       WORKSPACE: "${{ github.workspace }}"
@@ -28,23 +28,7 @@ jobs:
         run: |
             git --version
             git clone https://github.com/lamyj/sycomore.git .
-            
-        #uses: actions/checkout@v2
-        #with:
-        #  repository: lamyj/sycomore
-        #  fetch-depth: 0
-      # - name: Set up Python
-      #   uses: actions/setup-python@v2
-      - name: Start the worker
-        run: ${{ matrix.start_worker }}
       - name: Python version
-        run: ${{ matrix.worker }} python --version
+        run: python --version
       - name: Set up Python
-        run: ${{ matrix.worker }} python .ci/wheels/wheel.py ${{ matrix.python }}
-      #- name: Show env file
-      #  run: cat $GITHUB_ENV
-      #  if: ${{ matrix.os != 'windows-latest' }}
-      #- name: Run Python
-      #  run: ${{ matrix.worker }} ${{ env.PYTHON }} --version
-      #- name: Stop the worker
-      #  run: ${{ matrix.stop_worker }}
+        run: python .ci/wheels/wheel.py ${{ matrix.python }}
