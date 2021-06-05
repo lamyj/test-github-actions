@@ -35,6 +35,9 @@ jobs:
         run: ${{ matrix.worker }} python --version
       - name: Set up Python
         run: ${{ matrix.worker }} python .ci/wheels/setup_python.py ${{ matrix.python }}
+      - name: Show env file
+        run: cat $GITHUB_ENV
+        if: ${{ matrix.os != 'windows-latest' }}
       - name: Run Python
         run: ${{ matrix.worker }} ${{ env.PYTHON }} --version        
       - name: Stop the worker
