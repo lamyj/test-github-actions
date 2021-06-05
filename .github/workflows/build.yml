@@ -4,6 +4,7 @@ on: push
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
     name: ${{ matrix.os }} ${{ matrix.python }}
     strategy:
       fail-fast: false
@@ -36,12 +37,10 @@ jobs:
         run: ${{ matrix.worker }} python --version
       - name: Set up Python
         run: ${{ matrix.worker }} python .ci/wheels/setup_python.py ${{ matrix.python }}
-        container: ${{ matrix.container }}
       - name: Show env file
         run: cat $GITHUB_ENV
         if: ${{ matrix.os != 'windows-latest' }}
       - name: Run Python
         run: ${{ matrix.worker }} ${{ env.PYTHON }} --version
-        container: ${{ matrix.container }}
       - name: Stop the worker
         run: ${{ matrix.stop_worker }}
