@@ -12,20 +12,20 @@ jobs:
         include:
           # NOTE manylinux1 has gcc 4.8, with no "is_trivially_copyable": 
           # use manylinux2010
-          # - { os: "ubuntu-latest", python: "3.6", container: quay.io/pypa/manylinux2010_x86_64 }
-          # - { os: "ubuntu-latest", python: "3.7", container: quay.io/pypa/manylinux2010_x86_64 }
-          # - { os: "ubuntu-latest", python: "3.8", container: quay.io/pypa/manylinux2010_x86_64 }
-          # - { os: "ubuntu-latest", python: "3.9", container: quay.io/pypa/manylinux2010_x86_64 }
+          - { os: "ubuntu-latest", python: "3.6", container: quay.io/pypa/manylinux2010_x86_64 }
+          - { os: "ubuntu-latest", python: "3.7", container: quay.io/pypa/manylinux2010_x86_64 }
+          - { os: "ubuntu-latest", python: "3.8", container: quay.io/pypa/manylinux2010_x86_64 }
+          - { os: "ubuntu-latest", python: "3.9", container: quay.io/pypa/manylinux2010_x86_64 }
           
-          # - { os: "macos-latest", python: "3.6" }
-          # - { os: "macos-latest", python: "3.7" }
-          # - { os: "macos-latest", python: "3.8" }
-          # - { os: "macos-latest", python: "3.9" }
+          - { os: "macos-latest", python: "3.6" }
+          - { os: "macos-latest", python: "3.7" }
+          - { os: "macos-latest", python: "3.8" }
+          - { os: "macos-latest", python: "3.9" }
           
           - { os: "windows-latest", python: "3.6" }
           - { os: "windows-latest", python: "3.7" }
-          # - { os: "windows-latest", python: "3.8" }
-          # - { os: "windows-latest", python: "3.9" }
+          - { os: "windows-latest", python: "3.8" }
+          - { os: "windows-latest", python: "3.9" }
     env:
       MACOSX_DEPLOYMENT_TARGET: "10.9"
     steps:
