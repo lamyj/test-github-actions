@@ -27,7 +27,8 @@ jobs:
       - name: Checkout latest revision
         run: |
             git --version
-            git clone https://github.com/lamyj/sycomore.git
+            git clone https://github.com/lamyj/sycomore.git .
+            
         #uses: actions/checkout@v2
         #with:
         #  repository: lamyj/sycomore
