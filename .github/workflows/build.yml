@@ -25,10 +25,13 @@ jobs:
       WORKSPACE: "${{ github.workspace }}"
     steps:
       - name: Checkout latest revision
-        uses: actions/checkout@v2
-        with:
-          repository: lamyj/sycomore
-          fetch-depth: 0
+        run: |
+            git --version
+            git clone https://github.com/lamyj/sycomore.git
+        #uses: actions/checkout@v2
+        #with:
+        #  repository: lamyj/sycomore
+        #  fetch-depth: 0
       # - name: Set up Python
       #   uses: actions/setup-python@v2
       - name: Start the worker
