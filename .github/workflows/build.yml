@@ -22,13 +22,13 @@ jobs:
           # - { os: "windows-latest", python: "3.9" }
     env:
       MACOSX_DEPLOYMENT_TARGET: "10.9"
-      WORKSPACE: "${{ github.workspace }}"
+      # WORKSPACE: "${{ github.workspace }}"
     steps:
       - name: Checkout latest revision
         run: |
             git --version
             git clone https://github.com/lamyj/sycomore.git .
-      - name: Python version
-        run: python --version
-      - name: Set up Python
+      - name: Built-in Python version
+        run: python -V
+      - name: Build wheel
         run: python .ci/wheels/wheel.py ${{ matrix.python }}
