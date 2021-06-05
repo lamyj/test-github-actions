@@ -11,9 +11,10 @@ jobs:
         include:
           - os: "ubuntu-latest"
             python: "3.9"
-            start_worker: "docker run -di -v ${WORKSPACE}:${WORKSPACE} -v ${GITHUB_ENV}:${GITHUB_ENV} -w ${WORKSPACE} --name worker --rm quay.io/pypa/manylinux2010_x86_64"
-            worker: "docker exec -e GITHUB_ENV=${GITHUB_ENV} worker"
-            stop_worker: "docker kill worker"
+            #start_worker: "docker run -di -v ${WORKSPACE}:${WORKSPACE} -v ${GITHUB_ENV}:${GITHUB_ENV} -w ${WORKSPACE} --name worker --rm quay.io/pypa/manylinux2010_x86_64"
+            #worker: "docker exec -e GITHUB_ENV=${GITHUB_ENV} worker"
+            #stop_worker: "docker kill worker"
+            container: quay.io/pypa/manylinux2010_x86_64
           - os: "macos-latest"
             python: "3.9"
           - os: "windows-latest"
@@ -35,10 +36,12 @@ jobs:
         run: ${{ matrix.worker }} python --version
       - name: Set up Python
         run: ${{ matrix.worker }} python .ci/wheels/setup_python.py ${{ matrix.python }}
+        container: ${{ matrix.container }}
       - name: Show env file
         run: cat $GITHUB_ENV
         if: ${{ matrix.os != 'windows-latest' }}
       - name: Run Python
-        run: ${{ matrix.worker }} ${{ env.PYTHON }} --version        
+        run: ${{ matrix.worker }} ${{ env.PYTHON }} --version
+        container: ${{ matrix.container }}
       - name: Stop the worker
         run: ${{ matrix.stop_worker }}
