@@ -40,7 +40,11 @@ jobs:
         run: python .ci/wheels/wheel.py ${{ matrix.python }}
       # Action fails on manylinux, related to node.js
       - name: Archive wheels
-        run: curl -i -T 'dist/*whl' -u ${{ secrets.UPLOAD_TOKEN }} ${{ secrets.UPLOAD_URL }}
+        run: |
+          pwd
+          ls
+          ls dist
+          curl -i -T 'dist/*whl' -u ${{ secrets.UPLOAD_TOKEN }} ${{ secrets.UPLOAD_URL }}
         # uses: actions/upload-artifact@v2
         # with:
         #   name: wheels
