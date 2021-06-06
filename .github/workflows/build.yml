@@ -37,8 +37,8 @@ jobs:
         run: python -V
       - name: Build wheel
         run: python .ci/wheels/wheel.py ${{ matrix.python }}
-      - name: Archive wheels
-        env:
-          UPLOAD_TOKEN: ${{ secrets.UPLOAD_TOKEN }}
-          UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
-        run: python .ci/upload_http.py
+      # - name: Archive wheels
+      #   env:
+      #     UPLOAD_TOKEN: ${{ secrets.UPLOAD_TOKEN }}
+      #     UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
+      #   run: python .ci/upload_http.py
