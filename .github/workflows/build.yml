@@ -11,17 +11,15 @@ jobs:
       matrix:
         include:
           # - { os: ubuntu-latest, ci_type: deb, container: debian:stretch, python: python3 }
-          - { os: "ubuntu-latest", ci_type: "deb", container: "debian:buster", python: "python3" }
-          - os: macos-10.15
-            ci_type: brew
-            python: python3
+          - { os: "ubuntu-latest", ci_type: "deb", container: "debian:buster" }
+          - { os: "macos-10.15", ci_type: "brew" }
             # cmake_options: "-DPYTHON_EXECUTABLE=/usr/local/bin/python3"
-          - { os: "windows-latest", ci_type: "windows", python: "python3" }
+          - { os: "windows-latest", ci_type: "windows" }
           # FIXME: sample wheels?
     env:
       WORKSPACE: "${{ github.workspace }}"
-      PYTHON: "${{ matrix.python }}"
-      CMAKE_OPTIONS: "${{ matrix.cmake_options }}"
+      PYTHON: python3 #"${{ matrix.python }}"
+      # CMAKE_OPTIONS: "${{ matrix.cmake_options }}"
     
     steps:
       # Windows-specific steps
@@ -39,10 +37,38 @@ jobs:
       - name: Checkout latest revision
         run: git clone https://github.com/lamyj/sycomore.git .
       # Use it as sys.executable to feed to CMake PYTHON_EXECUTABLE
-      - name: Built-in Python version
-        run: ${{ matrix.python }} -V
-      # - name: Configure the build
-      #   run: ./.ci/${{ matrix.ci_type}}/install
+      # - name: Built-in Python version
+      #   run: ${{ matrix.python }} -V
+      - name: Configure the build
+        run: ./.ci/${{ matrix.ci_type}}/install
+      - name: Build sycomore
+        shell: 'python3 {0}'
+        run: |
+            import os
+            import subprocess
+            import sys
+            
+            workspace = os.environ["WORKSPACE"]
+            build_dir = os.environ.get("BUILD_DIR", os.path.join(workspace, "build"))
+            install_dir = os.environ.get("BUILD_DIR", os.path.join(workspace, "install"))
+            
+            for dir in [build_dir, install_dir]:
+                if not os.path.isdir(dir):
+                    os.makedirs(dir)
+            
+            subprocess.check_call(
+                [
+                    "cmake", 
+                    "-DPYTHON_EXECUTABLE={}".format(sys.executable),
+                    "-DCMAKE_BUILD_TYPE=Release",
+                    "-DCMAKE_INSTALL_PREFIX={}".format(install_dir), 
+                    workspace],
+                cwd=build_dir)
+            
+            subprocess.check_call(
+                # FIXME? --config Release
+                ["cmake", "--build", ".", "--target", "install", "--verbose"],
+                cwd=build_dir)
       # - name: Build Sycomore
       #   # Differences between brew and deb: -DCMAKE_CXX_FLAGS="-march=native -ffast-math" in brew, nothing in deb
       #   # Differences between windows and deb: "--config Release" and generator (nothing vs ninja)
