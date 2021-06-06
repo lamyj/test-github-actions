@@ -40,15 +40,19 @@ jobs:
         run: python .ci/wheels/wheel.py ${{ matrix.python }}
       - name: Archive wheels
         # run: curl -i -T dist/*whl -u ${{ secrets.UPLOAD_TOKEN }} ${{ secrets.UPLOAD_URL }}
-        shell: 'python {0} ${{ secrets.UPLOAD_TOKEN }} ${{ secrets.UPLOAD_URL }}'
+        env:
+          UPLOAD_TOKEN: ${{ secrets.UPLOAD_TOKEN }}
+          UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
+        shell: 'python {0}'
         # NOTE: must be compatible with Python 2.6 on manylinux
         # httplib / http.client ?
         run: |
           import base64
           import glob
+          import os
           import sys
           
-          token, url = sys.argv[1:]
+          token, url = [os.environ[x] for x in (UPLOAD_TOKEN, UPLOAD_URL)]
           
           if sys.version_info < (3, 0):
               from httplib import HTTPSConnection
