@@ -15,13 +15,13 @@ jobs:
           # - { os: "ubuntu-latest", python: "3.6", container: quay.io/pypa/manylinux2010_x86_64 }
           # - { os: "ubuntu-latest", python: "3.7", container: quay.io/pypa/manylinux2010_x86_64 }
           # - { os: "ubuntu-latest", python: "3.8", container: quay.io/pypa/manylinux2010_x86_64 }
-          # - { os: "ubuntu-latest", python: "3.9", container: quay.io/pypa/manylinux2010_x86_64 }
-          # 
+          - { os: "ubuntu-latest", python: "3.9", container: quay.io/pypa/manylinux2010_x86_64 }
+          
           # - { os: "macos-latest", python: "3.6" }
           # - { os: "macos-latest", python: "3.7" }
           # - { os: "macos-latest", python: "3.8" }
-          # - { os: "macos-latest", python: "3.9" }
-          # 
+          - { os: "macos-latest", python: "3.9" }
+          
           # - { os: "windows-latest", python: "3.6" }
           # - { os: "windows-latest", python: "3.7" }
           # - { os: "windows-latest", python: "3.8" }
@@ -40,8 +40,28 @@ jobs:
         run: python .ci/wheels/wheel.py ${{ matrix.python }}
       - name: Archive wheels
         # run: curl -i -T dist/*whl -u ${{ secrets.UPLOAD_TOKEN }} ${{ secrets.UPLOAD_URL }}
-        shell: 'python {0}'
+        shell: 'python {0} ${{ secrets.UPLOAD_TOKEN }} ${{ secrets.UPLOAD_URL }}'
+        # NOTE: must be compatible with Python 2.6 on manylinux
+        # httplib / http.client ?
         run: |
+          import base64
           import glob
-          print(glob.glob("."))
-          print(glob.glob("dist"))
+          import sys
+          
+          token, url = sys.argv[1:]
+          
+          if sys.version_info < (3, 0):
+              from httplib import HTTPSConnection
+          else:
+              from http.client import HTTPSConnection
+          
+          auth = base64.b64encode(token)
+          
+          for wheel in glob.glob("dist/*whl"):
+              data = open(wheel, "rb").read()
+              connection = HTTPSConnection("iris.icube.unistra.fr")
+              connection.request("PUT", url, data, {"Authorization": "Basic "+auth})
+              response = connection.getresponse()
+              print(response.status, response.reason)
+              print(response.read())
+              connection.close()
