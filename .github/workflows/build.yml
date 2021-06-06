@@ -52,6 +52,7 @@ jobs:
           import os
           import sys
           
+          print(os.environ)
           token, url = [os.environ[x] for x in (UPLOAD_TOKEN, UPLOAD_URL)]
           
           if sys.version_info < (3, 0):
