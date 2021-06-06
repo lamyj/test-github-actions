@@ -44,6 +44,7 @@ jobs:
       - name: Build sycomore
         shell: 'python3 {0}'
         run: |
+            import multiprocessing
             import os
             import subprocess
             import sys
@@ -56,6 +57,10 @@ jobs:
                 if not os.path.isdir(dir):
                     os.makedirs(dir)
             
+            os.environ["CMAKE_PREFIX_PATH"] = os.pathsep.join([
+                *os.environ.get("CMAKE_PREFIX_PATH", "").split(os.pathsep),
+                os.path.join(os.path.expanduser("~"), "local")
+            ])
             subprocess.check_call(
                 [
                     "cmake", 
@@ -67,7 +72,9 @@ jobs:
             
             subprocess.check_call(
                 # FIXME? --config Release
-                ["cmake", "--build", ".", "--target", "install", "--verbose"],
+                [
+                    "cmake", "--build", ".", "--target", "install", "--verbose",
+                    "--parallel", str(multiprocessing.cpu_count())],
                 cwd=build_dir)
       # - name: Build Sycomore
       #   # Differences between brew and deb: -DCMAKE_CXX_FLAGS="-march=native -ffast-math" in brew, nothing in deb
