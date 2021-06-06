@@ -73,7 +73,7 @@ jobs:
             subprocess.check_call(
                 # FIXME? --config Release
                 [
-                    "cmake", "--build", ".", "--target", "install", "--verbose",
+                    "cmake", "--build", ".", "--target", "install",
                     "--parallel", str(multiprocessing.cpu_count())],
                 cwd=build_dir)
       # - name: Build Sycomore
