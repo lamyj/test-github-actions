@@ -5,13 +5,12 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
-    name: ${{ matrix.os }} ${{ matrix.container }}
+    name: ${{ matrix.container || matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          # FIXME? test wheel CI on min python version
-          # FIXME? test wheel CI on max python version
+          # FIXME git not in base images
           - os: ubuntu-latest
             ci_type: deb
             container: debian:stretch
@@ -41,6 +40,10 @@ jobs:
       - name: Set up dev environment
         if: ${{ contains(matrix.os, 'windows') }}
         uses: seanmiddleditch/gha-setup-vsdevenv@master
+      # Debian/Ubuntu-specific steps
+      - name: Install Git
+        run: apt-get update && apt-get install -y git
+        if: ${{ contains(matrix.container, 'debian') || contains(matrix.container, 'ubuntu') }}
       # Generic steps
       - name: Checkout latest revision
         run: git clone https://github.com/lamyj/sycomore.git .
