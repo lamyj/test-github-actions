@@ -58,13 +58,18 @@ jobs:
           else:
               from http.client import HTTPSConnection
           
-          auth = base64.b64encode(token)
+          try:
+              auth = base64.b64encode(token)
+          except TypeError:
+              auth = base64.b64encode(token.encode()).decode()
           
           for wheel in glob.glob("dist/*whl"):
+              print(wheel)
               data = open(wheel, "rb").read()
               connection = HTTPSConnection(host)
               connection.request(
-                  "PUT", path, data, {"Authorization": "Basic "+auth})
+                  "PUT", os.path.join(path, os.path.basename(wheel)), data,
+                  {"Authorization": "Basic "+auth})
               response = connection.getresponse()
               print(response.status, response.reason)
               print(response.read())
