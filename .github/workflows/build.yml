@@ -16,7 +16,7 @@ jobs:
             ci_type: brew
             python: python3
             # cmake_options: "-DPYTHON_EXECUTABLE=/usr/local/bin/python3"
-          - { os: "windows-latest", ci_type: "windows", python: "python" }
+          - { os: "windows-latest", ci_type: "windows", python: "python3" }
           # FIXME: sample wheels?
     env:
       WORKSPACE: "${{ github.workspace }}"
