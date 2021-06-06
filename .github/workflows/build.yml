@@ -46,10 +46,12 @@ jobs:
           import base64
           import glob
           import os
+          import re
           import sys
           
           # print(os.environ)
           token, url = [os.environ[x] for x in ("UPLOAD_TOKEN", "UPLOAD_URL")]
+          _, host, path = re.match(r"(.+?)://([^/]+)(.*)", url).groups()
           
           if sys.version_info < (3, 0):
               from httplib import HTTPSConnection
@@ -60,9 +62,9 @@ jobs:
           
           for wheel in glob.glob("dist/*whl"):
               data = open(wheel, "rb").read()
-              connection = HTTPSConnection(url)
+              connection = HTTPSConnection(host)
               connection.request(
-                  "PUT", url, data, {"Authorization": "Basic "+auth})
+                  "PUT", path, data, {"Authorization": "Basic "+auth})
               response = connection.getresponse()
               print(response.status, response.reason)
               print(response.read())
