@@ -32,28 +32,24 @@ jobs:
       # NOTE manylinux2010 does not have a working nodejs. Use git and curl
       # instead of actions
       - name: Checkout latest revision
-        run: |
-            git clone https://github.com/lamyj/sycomore.git .
+        run: git clone https://github.com/lamyj/sycomore.git .
       - name: Built-in Python version
         run: python -V
       - name: Build wheel
         run: python .ci/wheels/wheel.py ${{ matrix.python }}
       - name: Archive wheels
-        # run: curl -i -T dist/*whl -u ${{ secrets.UPLOAD_TOKEN }} ${{ secrets.UPLOAD_URL }}
         env:
           UPLOAD_TOKEN: ${{ secrets.UPLOAD_TOKEN }}
           UPLOAD_URL: ${{ secrets.UPLOAD_URL }}
         shell: 'python {0}'
-        # NOTE: must be compatible with Python 2.6 on manylinux
-        # httplib / http.client ?
         run: |
           import base64
           import glob
           import os
           import sys
           
-          print(os.environ)
-          token, url = [os.environ[x] for x in (UPLOAD_TOKEN, UPLOAD_URL)]
+          # print(os.environ)
+          token, url = [os.environ[x] for x in ("UPLOAD_TOKEN", "UPLOAD_URL")]
           
           if sys.version_info < (3, 0):
               from httplib import HTTPSConnection
@@ -64,8 +60,9 @@ jobs:
           
           for wheel in glob.glob("dist/*whl"):
               data = open(wheel, "rb").read()
-              connection = HTTPSConnection("iris.icube.unistra.fr")
-              connection.request("PUT", url, data, {"Authorization": "Basic "+auth})
+              connection = HTTPSConnection(url)
+              connection.request(
+                  "PUT", url, data, {"Authorization": "Basic "+auth})
               response = connection.getresponse()
               print(response.status, response.reason)
               print(response.read())
