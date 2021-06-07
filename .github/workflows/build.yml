@@ -13,22 +13,15 @@ jobs:
           # - { os: ubuntu-latest, ci_type: deb, container: debian:stretch, python: python3 }
           - { os: "ubuntu-latest", ci_type: "deb", container: "debian:buster" }
           - { os: "macos-10.15", ci_type: "brew" }
-            # cmake_options: "-DPYTHON_EXECUTABLE=/usr/local/bin/python3"
           - { os: "windows-latest", ci_type: "windows" }
-          # FIXME: sample wheels?
     env:
       WORKSPACE: "${{ github.workspace }}"
-      PYTHON: python3 #"${{ matrix.python }}"
-      # CMAKE_OPTIONS: "${{ matrix.cmake_options }}"
-    
+      PYTHON: python3
     steps:
       # Windows-specific steps
       - name: Setup conda
         if: ${{ contains(matrix.os, 'windows') }}
         run: C:\Miniconda\condabin\conda.bat init powershell
-      # - name: Set up dev environment
-      #   if: ${{ contains(matrix.os, 'windows') }}
-      #   uses: seanmiddleditch/gha-setup-vsdevenv@master
       # Debian/Ubuntu-specific steps
       - name: Install Git and Python
         run: apt-get update && apt-get install -y git python3
@@ -36,56 +29,9 @@ jobs:
       # Generic steps
       - name: Checkout latest revision
         run: git clone https://github.com/lamyj/sycomore.git .
-      # Use it as sys.executable to feed to CMake PYTHON_EXECUTABLE
-      # - name: Built-in Python version
-      #   run: ${{ matrix.python }} -V
       - name: Configure the build
         run: ./.ci/${{ matrix.ci_type}}/install
       - name: Build sycomore
         run: python3 ./.ci/build/build.py
       - name: Run tests
         run: python3 ./.ci/build/post_build.py
-      # - name: Run tests
-      #   shell: "python3 {0}"
-      #   run: |
-      #       import os
-      #       import subprocess
-      #       import sys
-      # 
-      #       import distutils.sysconfig
-      # 
-      #       workspace = os.environ["WORKSPACE"]
-      #       build_dir = os.environ.get("BUILD_DIR", os.path.join(workspace, "build"))
-      #       install_dir = os.environ.get("BUILD_DIR", os.path.join(workspace, "install"))
-      # 
-      #       lib_dir = os.path.join(install_dir, "lib")
-      #       python_lib_dir = distutils.sysconfig.get_python_lib(True, prefix=install_dir)
-      #       python_tests_dir = os.path.join(workspace, "tests", "python")
-      # 
-      #       print(lib_dir, python_lib_dir, python_tests_dir)
-      # 
-      #       # Set-up environment: C++ library, Python module and test data location.
-      #       for name in ["DYLD_LIBRARY_PATH", "LD_LIBRARY_PATH"]:
-      #           os.environ[name] = os.pathsep.join([
-      #               *os.environ.get(name, "").split(os.pathsep), lib_dir])
-      #       os.environ["PYTHONPATH"] = os.pathsep.join([
-      #           *os.environ.get(name, "").split(os.pathsep), python_lib_dir])
-      #       os.environ["SYCOMORE_TEST_DATA"] = os.path.join(workspace, "tests", "data")
-      # 
-      #       # Run C++ and Python tests even if the former fails, return non-zero if any
-      #       # failed.
-      #       cpp_tests_return_code = subprocess.call(["ctest"], cwd=build_dir)
-      #       python_tests_return_code = subprocess.call(
-      #           [sys.executable, "-m", "unittest", "discover", "-s", python_tests_dir], 
-      #           cwd=build_dir)
-      #       sys.exit(max(cpp_tests_return_code, python_tests_return_code))
-
-
-      # - name: Build Sycomore
-      #   # Differences between brew and deb: -DCMAKE_CXX_FLAGS="-march=native -ffast-math" in brew, nothing in deb
-      #   # Differences between windows and deb: "--config Release" and generator (nothing vs ninja)
-      #   run: ./.ci/${{ matrix.ci_type}}/build
-      # - name: Run tests
-      #   # Differences between brew and deb: DYLD_LIBRARY_PATH vs LD_LIBRARY_PATH
-      #   # Differences between windows and deb: LD_LIBRARY_PATH
-      #   run: ./.ci/${{ matrix.ci_type}}/post_build
