@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - { os: ubuntu-latest, ci_type: deb, container: debian:stretch, python: python3 }
+          #- { os: "ubuntu-latest", ci_type: "deb", container: "debian:stretch", python: "python3" }
           - { os: "ubuntu-latest", ci_type: "deb", container: "debian:buster", python: "python3" }
           - { os: "macos-10.15", ci_type: "brew", python: "python3" }
           - { os: "windows-latest", ci_type: "windows", python: "python" }
@@ -27,11 +27,29 @@ jobs:
         run: apt-get update && apt-get install -y git python3
         if: ${{ contains(matrix.container, 'debian') || contains(matrix.container, 'ubuntu') }}
       # Generic steps
-      - name: Checkout latest revision
-        run: git clone https://github.com/lamyj/sycomore.git .
+      - name: Install APT packages
+        shell: "python {0}"
+        run: |
+            import subprocess
+            import sys
+            
+            print(sys.version)
+            
+            subprocess.check_call(["apt-get", "update"])
+            subprocess.check_call([
+                "apt-get", "install", "-y",
+                "cmake", "g++", "libboost-dev", "make", "ninja-build",
+                "pybind11-dev", "python3-pybind11", "python3-dev",
+                "libboost-test-dev", "python3-numpy"])
+        if: ${{ matrix.ci_type == 'deb' }}
       - name: Configure the build
         run: ./.ci/${{ matrix.ci_type}}/install
-      - name: Build sycomore
-        run: ${{ matrix.python }} ./.ci/build/build.py
-      - name: Run tests
-        run: ${{ matrix.python }} ./.ci/build/post_build.py
+        if: ${{ matrix.ci_type != 'deb' }}
+      
+      # - name: Checkout latest revision
+      #   run: git clone https://github.com/lamyj/sycomore.git .
+      # 
+      # - name: Build sycomore
+      #   run: ${{ matrix.python }} ./.ci/build/build.py
+      # - name: Run tests
+      #   run: ${{ matrix.python }} ./.ci/build/post_build.py
