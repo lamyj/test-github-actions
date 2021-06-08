@@ -11,12 +11,12 @@ jobs:
       matrix:
         include:
           # - { os: ubuntu-latest, ci_type: deb, container: debian:stretch, python: python3 }
-          - { os: "ubuntu-latest", ci_type: "deb", container: "debian:buster" }
-          - { os: "macos-10.15", ci_type: "brew" }
-          - { os: "windows-latest", ci_type: "windows" }
+          - { os: "ubuntu-latest", ci_type: "deb", container: "debian:buster", python: "python3" }
+          - { os: "macos-10.15", ci_type: "brew", python: "python3" }
+          - { os: "windows-latest", ci_type: "windows", python: "python" }
     env:
       WORKSPACE: "${{ github.workspace }}"
-      PYTHON: python3
+      PYTHON: "${{ matrix.python }}"
     steps:
       # Windows-specific steps
       - name: Setup conda
@@ -32,6 +32,6 @@ jobs:
       - name: Configure the build
         run: ./.ci/${{ matrix.ci_type}}/install
       - name: Build sycomore
-        run: python3 ./.ci/build/build.py
+        run: ${{ matrix.python }} ./.ci/build/build.py
       - name: Run tests
-        run: python3 ./.ci/build/post_build.py
+        run: ${{ matrix.python }} ./.ci/build/post_build.py
