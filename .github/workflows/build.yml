@@ -38,6 +38,8 @@ jobs:
       - name: Set-up (apt)
         shell: 'python3 {0}'
         run: |
+            import io
+            import os
             import subprocess
             import tempfile
             import zipfile
