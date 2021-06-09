@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          #- { os: "ubuntu-latest", ci_type: "deb", container: "debian:stretch", python: "python3" }
+          - { os: "ubuntu-latest", packaging: "apt", container: "debian:stretch", python: "python3" }
           - { os: "ubuntu-latest", packaging: "apt", container: "debian:buster", python: "python3" }
           - { os: "macos-10.15", packaging: "brew", python: "python3" }
           - { os: "windows-latest", packaging: "conda", python: "python" }
@@ -27,6 +27,7 @@ jobs:
         if: ${{ contains(matrix.container, 'debian') || contains(matrix.container, 'ubuntu') }}
       
       - name: Provision (Windows)
+        # Initialize the Conda environment by default
         run: C:\Miniconda\condabin\conda.bat init powershell
         if: ${{ contains(matrix.os, 'windows') }}
       
@@ -40,5 +41,6 @@ jobs:
       
       - name: Build sycomore
         run: ${{ matrix.python }} ./.ci/build/build.py
+      
       - name: Run tests
         run: ${{ matrix.python }} ./.ci/build/post_build.py
