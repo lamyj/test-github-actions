@@ -12,11 +12,12 @@ jobs:
         include:
           - { os: "ubuntu-latest", packaging: "apt", container: "debian:stretch", python: "python3" }
           - { os: "ubuntu-latest", packaging: "apt", container: "debian:buster", python: "python3" }
+          - { os: "ubuntu-latest", packaging: "apt", container: "ubuntu:bionic", python: "python3" }
+          - { os: "ubuntu-latest", packaging: "apt", container: "ubuntu:focal", python: "python3" }
           - { os: "macos-10.15", packaging: "brew", python: "python3" }
           - { os: "windows-latest", packaging: "conda", python: "python" }
     env:
       WORKSPACE: "${{ github.workspace }}"
-      PYTHON: "${{ matrix.python }}"
     steps:
       - name: Provision (Debian, Ubuntu)
         # Install Python and Git. macOS and Windows workers already have this,
@@ -37,7 +38,7 @@ jobs:
         run: git clone --depth=1 https://github.com/lamyj/sycomore.git .
       
       - name: Set-up (${{ matrix.packaging }})
-        run: python3 .ci/build/${{ matrix.packaging }}.py
+        run: ${{ matrix.python }} .ci/build/${{ matrix.packaging }}.py
       
       - name: Build sycomore
         run: ${{ matrix.python }} ./.ci/build/build.py
