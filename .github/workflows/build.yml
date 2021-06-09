@@ -11,9 +11,9 @@ jobs:
       matrix:
         include:
           #- { os: "ubuntu-latest", ci_type: "deb", container: "debian:stretch", python: "python3" }
-          - { os: "ubuntu-latest", ci_type: "deb", container: "debian:buster", python: "python3" }
-          - { os: "macos-10.15", ci_type: "brew", python: "python3" }
-          - { os: "windows-latest", ci_type: "windows", python: "python" }
+          - { os: "ubuntu-latest", packaging: "deb", container: "debian:buster", python: "python3" }
+          - { os: "macos-10.15", packaging: "brew", python: "python3" }
+          - { os: "windows-latest", packaging: "conda", python: "python" }
     env:
       WORKSPACE: "${{ github.workspace }}"
       PYTHON: "${{ matrix.python }}"
@@ -35,77 +35,8 @@ jobs:
         # tags.
         run: git clone --depth=1 https://github.com/lamyj/sycomore.git .
       
-      - name: Set-up (apt)
-        shell: 'python3 {0}'
-        run: |
-            import io
-            import os
-            import subprocess
-            import tempfile
-            import zipfile
-            
-            subprocess.check_call([
-                "apt-get", "-y", "--no-install-recommends", "install",
-                "cmake", "g++", "libboost-dev", "make", "ninja-build",
-                "pybind11-dev", "python3-pybind11", "python3-dev", 
-                "python3-requests", "libboost-test-dev", "python3-numpy"])
-            
-            import requests
-            
-            with tempfile.TemporaryDirectory() as directory:
-                response = requests.get("https://github.com/xtensor-stack/xsimd/archive/refs/tags/7.5.0.zip")
-                response.raise_for_status()
-                with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
-                    archive.extractall(directory)
-                subprocess.check_call(
-                    ["cmake", "-DCMAKE_INSTALL_PREFIX={}".format(os.path.expanduser("~/local")), "."], 
-                    cwd=os.path.join(directory, "xsimd-7.5.0"))
-                subprocess.check_call(
-                    ["cmake", "--build", ".", "--config", "Release", "--target", "install"],
-                    cwd=os.path.join(directory, "xsimd-7.5.0"))
-
-            
-        if: ${{ contains(matrix.container, 'debian') || contains(matrix.container, 'ubuntu') }}
-      
-      - name: Set-up (brew)
-        shell: 'python3 {0}'
-        run: |
-            import subprocess
-            
-            data = subprocess.check_output(["brew", "ls", "--versions"]).decode()
-            versions = {}
-            for line in data.splitlines():
-                if not line:
-                    continue
-                items = [x for x in line.split(" ") if x]
-                package = items[0].rsplit("@", 1)[0]
-                versions.setdefault(package, []).extend(items[1:])
-            
-            data = subprocess.check_output(["brew", "outdated"]).decode()
-            outdated = [x.split(" ")[0] for x in data.splitlines() if x]
-            
-            install = []
-            upgrade = []
-            for package in ["boost", "cmake", "libomp", "ninja", "numpy", "pybind11", "xsimd"]:
-                if package not in versions:
-                    install.append(package)
-                elif package in outdated:
-                    upgrade.append(package)
-                else:
-                    continue
-                
-            subprocess.check_call(["brew", "upgrade", *upgrade])
-            subprocess.check_call(["brew", "install", *install])
-        if: ${{ contains(matrix.os, 'macos') }}
-      
-      - name: Set-up (conda)
-        shell: 'python3 {0}'
-        run: |
-            import subprocess
-            subprocess.check_call([
-                "conda", "install", "--yes", "-c", "conda-forge",
-                "boost", "cmake", "ninja", "numpy", "pybind11", "xsimd"])
-        if: ${{ contains(matrix.os, 'windows') }}
+      - name: Set-up (${{ matrix.packaging }})
+        run: python3 .ci/build/${{ matrix.packaging }}.py
       
       - name: Build sycomore
         run: ${{ matrix.python }} ./.ci/build/build.py
