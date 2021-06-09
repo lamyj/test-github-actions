@@ -18,7 +18,7 @@ jobs:
       WORKSPACE: "${{ github.workspace }}"
       PYTHON: "${{ matrix.python }}"
     steps:
-      - name: Provision
+      - name: Provision (Debian, Ubuntu)
         # Install Python and Git. macOS and Windows workers already have this,
         # however for Linux we are running in minimal containers.
         run: |
@@ -26,7 +26,7 @@ jobs:
           apt-get install -y git python3
         if: ${{ contains(matrix.container, 'debian') || contains(matrix.container, 'ubuntu') }}
       
-      - name: Provision
+      - name: Provision (Windows)
         run: C:\Miniconda\condabin\conda.bat init powershell
         if: ${{ contains(matrix.os, 'windows') }}
       
@@ -38,7 +38,6 @@ jobs:
       - name: Set-up (apt)
         shell: 'python3 {0}'
         run: |
-            import requests
             import subprocess
             import tempfile
             import zipfile
